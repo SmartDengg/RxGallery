@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+>
+
+  <!--Top-->
+  <RelativeLayout
+      android:id="@+id/gallery_layout_title_rl"
+      android:layout_width="match_parent"
+      android:layout_height="?attr/actionBarSize"
+      android:background="@color/colorPrimary"
+  >
+    <TextView
+        android:id="@+id/gallery_layout_count_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/material_24dp"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/material_18sp"
+        android:text="0/9"
+    />
+  </RelativeLayout>
+
+  <!--Content-->
+  <android.support.v7.widget.RecyclerView
+      android:id="@+id/gallery_layout_rv"
+      android:layout_below="@id/gallery_layout_title_rl"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginTop="?attr/actionBarSize"
+      android:clipToPadding="false"
+      android:background="@android:color/white"
+  >
+  </android.support.v7.widget.RecyclerView>
+
+  <!--Bottom-->
+  <RelativeLayout
+      android:id="@+id/gallery_layout_bottom_rl"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/material_48dp"
+      android:layout_gravity="bottom"
+      android:background="@color/colorPrimary"
+      app:layout_behavior="@string/auto_hide_bottom_behavior"
+  >
+    <Button
+        android:id="@+id/gallery_layout_category_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/material_18sp"
+        android:text="全部图片"
+        android:background="@drawable/abc_list_selector_holo_dark"
+    />
+
+    <Button
+        android:id="@+id/gallery_layout_preview_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/material_18sp"
+        android:text="预览"
+        android:background="@drawable/abc_list_selector_holo_dark"
+    />
+  </RelativeLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>

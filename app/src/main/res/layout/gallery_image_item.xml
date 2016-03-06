@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/gallery_image_item_root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/material_3dp"
+>
+
+  <ImageView
+      android:id="@+id/gallery_image_item_thumb_iv"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/material_144dp"
+      android:scaleType="center"
+      android:layout_gravity="center"
+      android:src="@drawable/holder"
+  />
+
+</FrameLayout>
