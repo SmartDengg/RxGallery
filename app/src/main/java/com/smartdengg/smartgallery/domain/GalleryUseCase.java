@@ -13,8 +13,8 @@ import java.util.List;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action0;
+import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.functions.Func2;
 import rx.subscriptions.Subscriptions;
 
 /**
@@ -45,7 +45,7 @@ public class GalleryUseCase extends UseCase<List<FolderEntity>> {
 
   @Override protected Observable<List<FolderEntity>> interactor() {
 
-    final Observable<ImageEntity> connectableObservable = Observable.create(new Observable.OnSubscribe<Cursor>() {
+    return Observable.create(new Observable.OnSubscribe<Cursor>() {
       @Override public void call(Subscriber<? super Cursor> subscriber) {
 
         final Cursor cursor = cursorLoader.loadInBackground();
@@ -98,55 +98,44 @@ public class GalleryUseCase extends UseCase<List<FolderEntity>> {
 
         return file.exists() && parentFile != null;
       }
-    }).share();
+    }).doOnNext(new Action1<ImageEntity>() {
+      @Override public void call(ImageEntity imageEntity) {
 
-    return connectableObservable
-        .map(new Func1<ImageEntity, List<FolderEntity>>() {
-          @Override public List<FolderEntity> call(ImageEntity imageEntity) {
+        File folderFile = new File(imageEntity.getImagePath()).getParentFile();
+        FolderEntity clone = folderEntity.newInstance();
+        clone.setFolderName(folderFile.getName());
+        clone.setFolderPath(folderFile.getAbsolutePath());
 
-            File folderFile = new File(imageEntity.getImagePath()).getParentFile();
-            FolderEntity clone = folderEntity.newInstance();
-            clone.setFolderName(folderFile.getName());
-            clone.setFolderPath(folderFile.getAbsolutePath());
+        if (!items.contains(clone)) {
+          clone.setThumbPath(imageEntity.getImagePath());
+          clone.addImage(imageEntity);
+          items.add(clone);
+        } else {
+          items.get(items.indexOf(clone)).addImage(imageEntity);
+        }
+      }
+    }).toList().map(new Func1<List<ImageEntity>, FolderEntity>() {
+      @Override public FolderEntity call(List<ImageEntity> imageEntities) {
 
-            if (!items.contains(clone)) {
-              clone.setThumbPath(imageEntity.getImagePath());
-              clone.addImage(imageEntity);
-              items.add(clone);
-            } else {
-              items.get(items.indexOf(clone)).addImage(imageEntity);
-            }
+        FolderEntity clone = folderEntity.newInstance();
+        clone.setFolderName("所有图片");
+        clone.setFolderPath("");
+        clone.setChecked(true);
+        clone.setThumbPath(imageEntities.get(0).getImagePath());
+        clone.setImageEntities(imageEntities);
 
-            return items;
-          }
-        })
-        .toList()
-        .zipWith(connectableObservable.toList().concatMap(new Func1<List<ImageEntity>, Observable<FolderEntity>>() {
-          @Override public Observable<FolderEntity> call(List<ImageEntity> imageEntities) {
+        return clone;
+      }
+    }).map(new Func1<FolderEntity, List<FolderEntity>>() {
+      @Override public List<FolderEntity> call(FolderEntity folderEntity) {
 
-            FolderEntity clone = folderEntity.newInstance();
-            clone.setFolderName("所有图片");
-            clone.setFolderPath("");
-            clone.setChecked(true);
-            clone.setThumbPath(imageEntities.get(0).getImagePath());
-            clone.setImageEntities(imageEntities);
+        List<FolderEntity> galleryFolderEntities = new ArrayList<>(items.size() + 1);
 
-            return Observable.just(clone);
-          }
-        }), new Func2<List<List<FolderEntity>>, FolderEntity, List<FolderEntity>>() {
-          @Override public List<FolderEntity> call(List<List<FolderEntity>> folderLists, FolderEntity allEntity) {
+        galleryFolderEntities.add(folderEntity);
+        galleryFolderEntities.addAll(items);
 
-            List<FolderEntity> galleryFolderEntities = new ArrayList<>(folderLists.get(0).size() + 1);
-
-            galleryFolderEntities.add(allEntity);
-
-            for (FolderEntity entity : folderLists.get(0)) {
-              galleryFolderEntities.add(entity);
-            }
-
-            return galleryFolderEntities;
-          }
-        })
-        .compose(SchedulersCompat.<List<FolderEntity>>applyIoSchedulers());
+        return galleryFolderEntities;
+      }
+    }).compose(SchedulersCompat.<List<FolderEntity>>applyIoSchedulers());
   }
 }
