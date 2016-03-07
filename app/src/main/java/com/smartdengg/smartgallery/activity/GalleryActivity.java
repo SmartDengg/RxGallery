@@ -119,7 +119,11 @@ public class GalleryActivity extends AppCompatActivity {
 
       GalleryActivity.this.refreshData(folderEntity);
 
-      sheetDialog.dismiss();
+      recyclerView.post(new Runnable() {
+        @Override public void run() {
+          sheetDialog.dismiss();
+        }
+      });
     }
   };
 

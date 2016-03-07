@@ -1,5 +1,6 @@
 package com.smartdengg.smartgallery.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -38,7 +39,7 @@ public class GalleryFolderAdapter extends RecyclerView.Adapter<GalleryFolderAdap
     return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.gallery_folder_item, parent, false));
   }
 
-  @Override public void onBindViewHolder(ViewHolder holder, int position) {
+  @SuppressLint("SetTextI18n") @Override public void onBindViewHolder(ViewHolder holder, int position) {
 
      /*无增删操作，所以，position可以作为唯一变量*/
     holder.rootView.setTag(position);
