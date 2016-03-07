@@ -79,7 +79,7 @@ public class GalleryActivity extends AppCompatActivity {
   private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
     @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
       final Picasso picasso = Picasso.with(GalleryActivity.this);
-      if (newState == RecyclerView.SCROLL_STATE_IDLE || newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+      if (newState == RecyclerView.SCROLL_STATE_IDLE || newState == RecyclerView.SCROLL_STATE_SETTLING) {
         picasso.resumeTag(GalleryActivity.this);
       } else {
         picasso.pauseTag(GalleryActivity.this);
