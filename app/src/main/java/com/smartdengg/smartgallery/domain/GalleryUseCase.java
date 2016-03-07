@@ -9,6 +9,7 @@ import com.smartdengg.smartgallery.entity.ImageEntity;
 import com.smartdengg.smartgallery.manager.SchedulersCompat;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import rx.Observable;
 import rx.Subscriber;
@@ -134,7 +135,7 @@ public class GalleryUseCase extends UseCase<List<FolderEntity>> {
         galleryFolderEntities.add(folderEntity);
         galleryFolderEntities.addAll(items);
 
-        return galleryFolderEntities;
+        return Collections.unmodifiableList(galleryFolderEntities);
       }
     }).compose(SchedulersCompat.<List<FolderEntity>>applyIoSchedulers());
   }
