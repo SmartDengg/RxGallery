@@ -34,7 +34,7 @@ public class MyApplication extends Application {
 
   private Picasso.Listener picassoListener = new Picasso.Listener() {
     @Override public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-      Logger.e(exception.toString() + uri);
+      Logger.d("Picasso failure: %s \n    path = %s", exception.toString(), uri);
     }
   };
 

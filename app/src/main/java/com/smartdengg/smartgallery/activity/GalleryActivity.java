@@ -33,6 +33,7 @@ import com.smartdengg.smartgallery.entity.FolderEntity;
 import com.smartdengg.smartgallery.entity.ImageEntity;
 import com.smartdengg.smartgallery.ui.BottomSheetDialog;
 import com.smartdengg.smartgallery.ui.MarginDecoration;
+import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 import rx.Observable;
@@ -72,6 +73,17 @@ public class GalleryActivity extends AppCompatActivity {
           .setStartDelay(getResources().getInteger(android.R.integer.config_shortAnimTime))
           .setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime))
           .setListener(null);
+    }
+  };
+
+  private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+    @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+      final Picasso picasso = Picasso.with(GalleryActivity.this);
+      if (newState == RecyclerView.SCROLL_STATE_IDLE || newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+        picasso.resumeTag(GalleryActivity.this);
+      } else {
+        picasso.pauseTag(GalleryActivity.this);
+      }
     }
   };
 
@@ -134,6 +146,7 @@ public class GalleryActivity extends AppCompatActivity {
     recyclerView.setLayoutManager(gridLayoutManager);
     recyclerView.setHasFixedSize(true);
     recyclerView.addItemDecoration(new MarginDecoration(GalleryActivity.this));
+    recyclerView.addOnScrollListener(scrollListener);
     recyclerView.setAdapter(galleryImageAdapter);
 
     if (savedInstanceState == null) {

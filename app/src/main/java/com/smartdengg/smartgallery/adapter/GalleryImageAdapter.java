@@ -17,6 +17,7 @@ import butterknife.OnClick;
 import com.orhanobut.logger.Logger;
 import com.smartdengg.smartgallery.R;
 import com.smartdengg.smartgallery.entity.ImageEntity;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.List;
@@ -64,13 +65,18 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
     String thumbUrl = entity.getImagePath();
     if (thumbUrl != null) {
       /*Sorry for my poor english, but you must be careful of this file,because it may be load fail*/
-      Picasso
-          .with(context)
+      Picasso picasso = Picasso.with(context);
+      picasso.setIndicatorsEnabled(true);
+      picasso.setLoggingEnabled(true);
+
+      picasso
           .load(new File(thumbUrl))
           .placeholder(R.drawable.holder)
           .error(R.drawable.holder)
+          .networkPolicy(NetworkPolicy.NO_CACHE)
           .fit()
           .noFade()
+          .tag(thumbUrl)
           .into(holder.thumbIv);
     }
 
