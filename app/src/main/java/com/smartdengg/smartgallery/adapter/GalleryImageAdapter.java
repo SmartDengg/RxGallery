@@ -137,8 +137,6 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
     int position = this.items.indexOf(entity);
     this.items.set(position, entity);
 
-    /*WTF there always occur a bug , fuck*/
-    //GalleryImageAdapter.this.notifyItemChanged(position);
     GalleryImageAdapter.this.notifyDataSetChanged();
   }
 

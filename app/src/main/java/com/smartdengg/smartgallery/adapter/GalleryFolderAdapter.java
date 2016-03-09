@@ -89,10 +89,6 @@ public class GalleryFolderAdapter extends RecyclerView.Adapter<GalleryFolderAdap
     this.items.set(newPosition, newEntity);
 
     GalleryFolderAdapter.this.notifyDataSetChanged();
-
-    /*麻蛋了，为什么在support V 22.2.0上有Bug*/
-    //GalleryFolderAdapter.this.notifyItemChanged(oldPosition);
-    //GalleryFolderAdapter.this.notifyItemChanged(newPosition);
   }
 
   public class ViewHolder extends RecyclerView.ViewHolder {
