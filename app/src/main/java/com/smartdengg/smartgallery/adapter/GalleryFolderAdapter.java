@@ -59,6 +59,7 @@ public class GalleryFolderAdapter extends RecyclerView.Adapter<GalleryFolderAdap
           .placeholder(R.drawable.holder)
           .error(R.drawable.holder)
           .fit()
+          .centerCrop()
           .noFade()
           .into(holder.coverIv);
     }

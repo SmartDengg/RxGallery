@@ -76,7 +76,7 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
        * D/Picasso﹕ Main        completed    [R0]+807ms from NETWORK
        * D/Picasso﹕ Dispatcher  delivered    [R0]+809ms
        * */
-      picasso.setLoggingEnabled(true);
+      //picasso.setLoggingEnabled(true);
 
       picasso
           .load(new File(thumbUrl))
@@ -84,12 +84,13 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
           .error(R.drawable.holder)
           .networkPolicy(NetworkPolicy.NO_CACHE)
           .fit()
+          .centerCrop()
           .noFade()
           .tag(thumbUrl)
           .into(holder.thumbIv);
     }
 
-    holder.rootView.setBackgroundColor((entity.isChecked()) ? selectedColor : normalColor);
+    holder.rootView.setBackgroundColor(entity.isChecked() ? selectedColor : normalColor);
   }
 
   private void runEnterAnimation(View itemView, int position) {

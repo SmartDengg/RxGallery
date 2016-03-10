@@ -10,10 +10,8 @@
   <ImageView
       android:id="@+id/gallery_image_item_thumb_iv"
       android:layout_width="match_parent"
-      android:layout_height="@dimen/material_144dp"
-      android:scaleType="center"
+      android:layout_height="wrap_content"
       android:layout_gravity="center"
-      android:src="@drawable/holder"
   />
 
 </FrameLayout>

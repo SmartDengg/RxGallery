@@ -14,6 +14,11 @@
     <item name="android:windowCloseOnTouchOutside">true</item>
   </style>
 
+  <style name="AppTheme.Transparent">
+    <item name="android:windowBackground">@android:color/transparent</item>
+    <item name="android:windowIsTranslucent">true</item>
+  </style>
+
   <style name="AnimBottom" parent="@android:style/Animation">
     <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>
     <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>

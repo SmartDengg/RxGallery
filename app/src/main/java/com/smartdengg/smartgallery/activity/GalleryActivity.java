@@ -3,8 +3,13 @@ package com.smartdengg.smartgallery.activity;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.Looper;
+import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
@@ -18,12 +23,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import com.google.gson.Gson;
 import com.orhanobut.logger.Logger;
 import com.smartdengg.smartgallery.R;
 import com.smartdengg.smartgallery.adapter.GalleryFolderAdapter;
@@ -31,26 +36,36 @@ import com.smartdengg.smartgallery.adapter.GalleryImageAdapter;
 import com.smartdengg.smartgallery.domain.GalleryUseCase;
 import com.smartdengg.smartgallery.entity.FolderEntity;
 import com.smartdengg.smartgallery.entity.ImageEntity;
+import com.smartdengg.smartgallery.manager.MainThreadSubscription;
 import com.smartdengg.smartgallery.ui.BottomSheetDialog;
 import com.smartdengg.smartgallery.ui.MarginDecoration;
+import com.smartdengg.smartgallery.utils.BestBlur;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.subscriptions.Subscriptions;
 
 /**
  * Created by SmartDengg on 2016/3/5.
  */
 public class GalleryActivity extends AppCompatActivity {
 
+  protected static final int BLUR_RADIUS = 10;
+  protected static final float BLUR_SCALE = 0.0f;
   private static final int MAX_COUNT = 9;
 
   @NonNull @Bind(R.id.gallery_layout_count_tv) protected TextView countTv;
   @NonNull @Bind(R.id.gallery_layout_bottom_rl) protected RelativeLayout bottomRl;
   @NonNull @Bind(R.id.gallery_layout_category_btn) protected Button categoryBtn;
+  @NonNull @Bind(R.id.gallery_layout_preview_btn) protected Button previewBtn;
 
   @NonNull @Bind(R.id.gallery_layout_rv) protected RecyclerView recyclerView;
+  @NonNull @Bind(R.id.gallery_layout_hero_iv) protected ImageView heroIv;
 
   /*Image 相关*/
   private GalleryImageAdapter galleryImageAdapter;
@@ -64,6 +79,13 @@ public class GalleryActivity extends AppCompatActivity {
 
   /*加载图片*/
   private GalleryUseCase useCase;
+
+  private Subscription subscription = Subscriptions.empty();
+
+  /*缓存屏幕快照相关*/
+  private Canvas canvas = null;
+  private Paint paint = null;
+  private Bitmap screenBitmap;
 
   private DialogInterface.OnDismissListener dismissListener = new DialogInterface.OnDismissListener() {
     @Override public void onDismiss(DialogInterface dialog) {
@@ -129,6 +151,7 @@ public class GalleryActivity extends AppCompatActivity {
 
   public static void navigateToGallery(AppCompatActivity startingActivity) {
     startingActivity.startActivity(new Intent(startingActivity, GalleryActivity.class));
+    startingActivity.overridePendingTransition(0, 0);
   }
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -142,7 +165,7 @@ public class GalleryActivity extends AppCompatActivity {
 
   private void initView(Bundle savedInstanceState) {
 
-    GridLayoutManager gridLayoutManager = new GridLayoutManager(GalleryActivity.this, 3);
+    GridLayoutManager gridLayoutManager = new GridLayoutManager(GalleryActivity.this, 2);
     gridLayoutManager.setSmoothScrollbarEnabled(true);
 
     galleryImageAdapter = new GalleryImageAdapter(GalleryActivity.this);
@@ -152,6 +175,39 @@ public class GalleryActivity extends AppCompatActivity {
     recyclerView.addItemDecoration(new MarginDecoration(GalleryActivity.this));
     recyclerView.addOnScrollListener(scrollListener);
     recyclerView.setAdapter(galleryImageAdapter);
+
+    subscription = Observable.create(new Observable.OnSubscribe<Void>() {
+      @Override public void call(final Subscriber<? super Void> subscriber) {
+
+        if (Looper.getMainLooper() != Looper.myLooper()) {
+          throw new IllegalStateException("Must be called from the main thread. Was: " + Thread.currentThread());
+        }
+
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+          @Override public void onClick(View v) {
+            if (!subscriber.isUnsubscribed()) subscriber.onNext(null);
+          }
+        };
+        previewBtn.setOnClickListener(onClickListener);
+        subscriber.add(new MainThreadSubscription() {
+          @Override protected void onUnsubscribe() {
+            previewBtn.setOnClickListener(null);
+          }
+        });
+      }
+    }).filter(new Func1<Void, Boolean>() {
+      @Override public Boolean call(Void aVoid) {
+        return GalleryActivity.this.selectedImageEntities.size() > 0;
+      }
+    }).map(new Func1<Void, List<ImageEntity>>() {
+      @Override public List<ImageEntity> call(Void aVoid) {
+        return GalleryActivity.this.selectedImageEntities;
+      }
+    }).subscribe(new Action1<List<ImageEntity>>() {
+      @Override public void call(List<ImageEntity> imageEntities) {
+        GalleryActivity.this.navigateToPreview(imageEntities);
+      }
+    });
 
     if (savedInstanceState == null) {
       final View rootView = bottomRl.getRootView().findViewById(android.R.id.content);
@@ -166,6 +222,19 @@ public class GalleryActivity extends AppCompatActivity {
         });
       }
     }
+  }
+
+  private void navigateToPreview(List<ImageEntity> imageEntities) {
+
+    BestBlur bestBlur = new BestBlur(GalleryActivity.this);
+    Bitmap blurBitmap = bestBlur.blurBitmap(GalleryActivity.this.catchScreen(), BLUR_RADIUS, BLUR_SCALE);
+
+    heroIv.setVisibility(View.VISIBLE);
+    heroIv.setImageBitmap(blurBitmap);
+
+    bestBlur.destroy();
+
+    PreviewActivity.navigateToPreview(GalleryActivity.this, imageEntities);
   }
 
   private void initData() {
@@ -234,10 +303,6 @@ public class GalleryActivity extends AppCompatActivity {
     sheetDialog.setOnDismissListener(dismissListener);
   }
 
-  @NonNull @OnClick(R.id.gallery_layout_preview_btn) protected void onPreviewClick() {
-    Logger.json(new Gson().toJson(selectedImageEntities));
-  }
-
   private void refreshData(FolderEntity folderEntity) {
 
     List<ImageEntity> imageEntities = folderEntity.getImageEntities();
@@ -265,6 +330,33 @@ public class GalleryActivity extends AppCompatActivity {
     categoryBtn.setText(currentFolderEntity.getFolderName().toLowerCase());
   }
 
+  @CheckResult private Bitmap catchScreen() {
+
+    View rootView = GalleryActivity.this.getWindow().getDecorView().findViewById(android.R.id.content);
+
+    rootView.setDrawingCacheEnabled(true);
+    Bitmap drawingCache = rootView.getDrawingCache();
+
+    if (screenBitmap == null || canvas == null || paint == null) {
+      screenBitmap = Bitmap.createBitmap(drawingCache.getWidth(), drawingCache.getHeight(), Bitmap.Config.ARGB_8888);
+      canvas = new Canvas(screenBitmap);
+      paint = new Paint();
+      paint.setAntiAlias(true);
+      paint.setFlags(Paint.FILTER_BITMAP_FLAG);
+    }
+
+    canvas.drawBitmap(drawingCache, 0, 0, paint);
+
+    rootView.destroyDrawingCache();
+
+    return screenBitmap;
+  }
+
+  @Override protected void onPostResume() {
+    super.onPostResume();
+    this.heroIv.setVisibility(View.GONE);
+  }
+
   @Override public void finish() {
     super.finish();
     overridePendingTransition(0, 0);
@@ -273,6 +365,7 @@ public class GalleryActivity extends AppCompatActivity {
   @Override protected void onDestroy() {
     super.onDestroy();
     this.useCase.unsubscribe();
+    this.subscription.unsubscribe();
     ButterKnife.unbind(GalleryActivity.this);
   }
 }

@@ -25,6 +25,13 @@
     <activity android:name=".activity.GalleryActivity" android:screenOrientation="portrait"
     android:theme="@style/AppTheme.GrayActivity"
     />
+
+    <activity android:name=".activity.PreviewActivity" android:screenOrientation="portrait"
+    android:theme="@style/AppTheme.Transparent"
+    />
+
+
+
   </application>
 
 </manifest>

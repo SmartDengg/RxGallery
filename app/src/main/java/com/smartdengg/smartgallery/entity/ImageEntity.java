@@ -1,15 +1,21 @@
 package com.smartdengg.smartgallery.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by SmartDengg on 2016/3/5.
  */
-public class ImageEntity implements Cloneable {
+public class ImageEntity implements Cloneable, Parcelable {
 
   private String imageName;
   private String imagePath;
   private long date;
 
   private boolean isChecked = false;
+
+  public ImageEntity() {
+  }
 
   public ImageEntity newInstance() {
 
@@ -79,4 +85,26 @@ public class ImageEntity implements Cloneable {
         ", isChecked=" + isChecked +
         '}';
   }
+
+  @Override public int describeContents() { return 0; }
+
+  @Override public void writeToParcel(Parcel dest, int flags) {
+    dest.writeString(this.imageName);
+    dest.writeString(this.imagePath);
+    dest.writeLong(this.date);
+    dest.writeByte(isChecked ? (byte) 1 : (byte) 0);
+  }
+
+  protected ImageEntity(Parcel in) {
+    this.imageName = in.readString();
+    this.imagePath = in.readString();
+    this.date = in.readLong();
+    this.isChecked = in.readByte() != 0;
+  }
+
+  public static final Creator<ImageEntity> CREATOR = new Creator<ImageEntity>() {
+    public ImageEntity createFromParcel(Parcel source) {return new ImageEntity(source);}
+
+    public ImageEntity[] newArray(int size) {return new ImageEntity[size];}
+  };
 }
