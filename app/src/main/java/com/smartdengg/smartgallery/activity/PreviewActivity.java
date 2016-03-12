@@ -65,7 +65,8 @@ public class PreviewActivity extends AppCompatActivity {
     PreviewActivity.this.initView(savedInstanceState);
   }
 
-  private void initView(Bundle savedInstanceState) {
+  @SuppressLint("SetTextI18n") private void initView(Bundle savedInstanceState) {
+
 
     GalleryPagerAdapter pagerAdapter = new GalleryPagerAdapter(PreviewActivity.this);
     viewPager.setClipToPadding(false);
@@ -80,6 +81,7 @@ public class PreviewActivity extends AppCompatActivity {
     }).doOnNext(new Action1<List<ImageEntity>>() {
       @Override public void call(List<ImageEntity> imageEntities) {
         if (imageEntities != null) PreviewActivity.this.totalCount = imageEntities.size();
+        indexTv.setText("1/" + totalCount);
       }
     }).subscribe(pagerAdapter);
   }

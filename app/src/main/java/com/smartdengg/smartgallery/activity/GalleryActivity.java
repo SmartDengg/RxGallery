@@ -55,8 +55,9 @@ import rx.subscriptions.Subscriptions;
  */
 public class GalleryActivity extends AppCompatActivity {
 
-  protected static final int BLUR_RADIUS = 10;
-  protected static final float BLUR_SCALE = 0.0f;
+  protected static final int BLUR_RADIUS = 6;
+  protected static final float BLUR_DESATURATE = 0.0f;
+  protected static final int BLUR_SCALE = BLUR_RADIUS / 2;
   private static final int MAX_COUNT = 9;
 
   @NonNull @Bind(R.id.gallery_layout_count_tv) protected TextView countTv;
@@ -227,11 +228,16 @@ public class GalleryActivity extends AppCompatActivity {
   private void navigateToPreview(List<ImageEntity> imageEntities) {
 
     BestBlur bestBlur = new BestBlur(GalleryActivity.this);
-    Bitmap blurBitmap = bestBlur.blurBitmap(GalleryActivity.this.catchScreen(), BLUR_RADIUS, BLUR_SCALE);
+
+    Bitmap screenSnapshot = GalleryActivity.this.catchScreen();
+    Bitmap scaledBitmap = Bitmap.createScaledBitmap(screenSnapshot, screenSnapshot.getWidth() / BLUR_SCALE,
+                                                    screenSnapshot.getHeight() / BLUR_SCALE, true);
+    Bitmap blurBitmap = bestBlur.blurBitmap(scaledBitmap, BLUR_RADIUS, BLUR_DESATURATE);
 
     heroIv.setVisibility(View.VISIBLE);
     heroIv.setImageBitmap(blurBitmap);
 
+    if (screenSnapshot != scaledBitmap) scaledBitmap.recycle();
     bestBlur.destroy();
 
     PreviewActivity.navigateToPreview(GalleryActivity.this, imageEntities);
