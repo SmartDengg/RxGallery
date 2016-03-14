@@ -77,6 +77,7 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
        * D/Picasso﹕ Dispatcher  delivered    [R0]+809ms
        * */
       //picasso.setLoggingEnabled(true);
+      picasso.cancelRequest(holder.thumbIv);
 
       picasso
           .load(new File(thumbUrl))
