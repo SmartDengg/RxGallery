@@ -41,6 +41,7 @@ import com.smartdengg.smartgallery.ui.BottomSheetDialog;
 import com.smartdengg.smartgallery.ui.MarginDecoration;
 import com.smartdengg.smartgallery.utils.BestBlur;
 import com.squareup.picasso.Picasso;
+import hugo.weaving.DebugLog;
 import java.util.ArrayList;
 import java.util.List;
 import rx.Observable;
@@ -243,7 +244,7 @@ public class GalleryActivity extends AppCompatActivity {
     PreviewActivity.navigateToPreview(GalleryActivity.this, imageEntities);
   }
 
-  private void initData() {
+  @DebugLog private void initData() {
     useCase = GalleryUseCase.createdUseCase(GalleryActivity.this);
     useCase.subscribe(new Subscriber<List<FolderEntity>>() {
       @Override public void onCompleted() {
@@ -267,6 +268,10 @@ public class GalleryActivity extends AppCompatActivity {
         Observable.just(currentFolderEntity.getImageEntities()).subscribe(GalleryActivity.this.galleryImageAdapter);
       }
     });
+  }
+
+  @NonNull @OnClick(R.id.gallery_layout_back_iv) protected void onBackClick() {
+    GalleryActivity.this.finish();
   }
 
   @NonNull @OnClick(R.id.gallery_layout_category_btn) protected void onCategoryClick() {

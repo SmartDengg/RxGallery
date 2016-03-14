@@ -7,7 +7,6 @@ import android.support.v4.content.CursorLoader;
 import com.smartdengg.smartgallery.entity.FolderEntity;
 import com.smartdengg.smartgallery.entity.ImageEntity;
 import com.smartdengg.smartgallery.manager.SchedulersCompat;
-import hugo.weaving.DebugLog;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +43,6 @@ public class GalleryUseCase extends UseCase<List<FolderEntity>> {
     return new GalleryUseCase(context);
   }
 
-  @DebugLog
   @Override protected Observable<List<FolderEntity>> interactor() {
 
     return Observable.create(new Observable.OnSubscribe<Cursor>() {

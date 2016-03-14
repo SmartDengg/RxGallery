@@ -14,6 +14,18 @@
       android:layout_height="?attr/actionBarSize"
       android:background="@color/colorPrimary"
   >
+
+    <ImageView
+        android:id="@+id/gallery_layout_back_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/material_8dp"
+        android:paddingRight="@dimen/material_8dp"
+        android:layout_centerVertical="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/back"
+    />
+
     <TextView
         android:id="@+id/gallery_layout_count_tv"
         android:layout_width="wrap_content"
