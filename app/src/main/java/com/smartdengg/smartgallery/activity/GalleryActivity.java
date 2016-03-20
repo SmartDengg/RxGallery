@@ -162,7 +162,7 @@ public class GalleryActivity extends AppCompatActivity {
     ButterKnife.bind(GalleryActivity.this);
 
     GalleryActivity.this.initView(savedInstanceState);
-    GalleryActivity.this.initData();
+    GalleryActivity.this.loadGallery();
   }
 
   private void initView(Bundle savedInstanceState) {
@@ -244,7 +244,7 @@ public class GalleryActivity extends AppCompatActivity {
     PreviewActivity.navigateToPreview(GalleryActivity.this, imageEntities);
   }
 
-  @DebugLog private void initData() {
+  @DebugLog private void loadGallery() {
     useCase = GalleryUseCase.createdUseCase(GalleryActivity.this);
     useCase.subscribe(new Subscriber<List<FolderEntity>>() {
       @Override public void onCompleted() {
