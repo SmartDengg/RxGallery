@@ -46,7 +46,7 @@ public class GalleryUseCase extends UseCase<List<FolderEntity>> {
   @Override protected Observable<List<FolderEntity>> interactor() {
 
     return Observable.create(new Observable.OnSubscribe<Cursor>() {
-      @Override public void call(Subscriber<? super Cursor> subscriber) {
+      @Override public void call(final Subscriber<? super Cursor> subscriber) {
 
         final Cursor cursor = cursorLoader.loadInBackground();
 
@@ -59,18 +59,25 @@ public class GalleryUseCase extends UseCase<List<FolderEntity>> {
           }
         }));
 
-        if (!subscriber.isUnsubscribed()) {
-          if (cursor == null) {
-            Observable.error(new NullPointerException("cursor must not be null"));
-          } else {
+        // TODO: 2016/3/28  cursor作为事件被发送 ????
+        if (cursor == null) {
+          Observable.error(new NullPointerException("cursor must not be null"));
+        } else {
+          try {
             while (cursor.moveToNext()) {
               if (cursor.getString(cursor.getColumnIndexOrThrow(GALLERY_PROJECTION[0])).endsWith(".gif")) {
                 continue;
               }
+
+              if (cursor.isClosed() || subscriber.isUnsubscribed()) break;
               subscriber.onNext(cursor);
             }
-            cursor.close();
-            subscriber.onCompleted();
+          } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) Observable.error(e);
+          } finally {
+
+            if (!cursor.isClosed()) cursor.close();
+            if (!subscriber.isUnsubscribed()) subscriber.onCompleted();
           }
         }
       }

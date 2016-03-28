@@ -23,7 +23,7 @@
         android:paddingRight="@dimen/material_8dp"
         android:layout_centerVertical="true"
         android:scaleType="centerInside"
-        android:src="@drawable/back"
+        android:src="@drawable/cancel"
     />
 
     <TextView
