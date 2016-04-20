@@ -20,10 +20,8 @@
       </intent-filter>
     </activity>
 
-    <activity android:name=".activity.GalleryFolderActivity" android:screenOrientation="portrait"/>
-
     <activity android:name=".activity.GalleryActivity" android:screenOrientation="portrait"
-    android:theme="@style/AppTheme.GrayActivity"
+    android:theme="@style/AppTheme.HomeGreen"
     />
 
     <activity android:name=".activity.PreviewActivity" android:screenOrientation="portrait"

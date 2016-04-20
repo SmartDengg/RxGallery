@@ -2,4 +2,5 @@
     <string name="app_name">SmartGallery</string>
     <string name="auto_hide_bottom_behavior">com.smartdengg.smartgallery.manager.BottomAutoBehavior</string>
     <string name="smartDengg">By : SmartDengg</string>
+    <string name="homelink">By : HomeLink</string>
 </resources>

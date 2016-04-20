@@ -16,7 +16,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.orhanobut.logger.Logger;
 import com.smartdengg.smartgallery.R;
-import com.smartdengg.smartgallery.entity.ImageEntity;
+import com.lianjiatech.infrastructure.smartgallery.entity.ImageEntity;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import java.io.File;
@@ -44,7 +44,7 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
   public GalleryImageAdapter(Context context) {
     this.context = context;
     this.normalColor = context.getResources().getColor(android.R.color.transparent);
-    this.selectedColor = context.getResources().getColor(R.color.design_red);
+    this.selectedColor = context.getResources().getColor(R.color.homeLinkGreen);
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -66,7 +66,7 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
     if (thumbUrl != null) {
       /*Sorry for my poor english, but you must be careful of this file,because it may be load fail*/
       Picasso picasso = Picasso.with(context);
-      picasso.setIndicatorsEnabled(true);
+      //picasso.setIndicatorsEnabled(true);
       /**
        * D/Picasso﹕ Main        created      [R0] Request{http://i.imgur.com/rT5vXE1.jpg}
        * D/Picasso﹕ Dispatcher  enqueued     [R0]+21ms

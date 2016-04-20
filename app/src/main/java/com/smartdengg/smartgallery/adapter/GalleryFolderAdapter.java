@@ -15,7 +15,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.orhanobut.logger.Logger;
 import com.smartdengg.smartgallery.R;
-import com.smartdengg.smartgallery.entity.FolderEntity;
+import com.lianjiatech.infrastructure.smartgallery.entity.FolderEntity;
 import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.List;

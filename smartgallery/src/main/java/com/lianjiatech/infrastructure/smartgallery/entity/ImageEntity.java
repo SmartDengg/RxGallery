@@ -1,4 +1,4 @@
-package com.smartdengg.smartgallery.entity;
+package com.lianjiatech.infrastructure.smartgallery.entity;
 
 import android.os.Parcel;
 import android.os.Parcelable;

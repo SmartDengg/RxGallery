@@ -16,7 +16,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.smartdengg.smartgallery.R;
 import com.smartdengg.smartgallery.adapter.GalleryPagerAdapter;
-import com.smartdengg.smartgallery.entity.ImageEntity;
+import com.lianjiatech.infrastructure.smartgallery.entity.ImageEntity;
 import com.squareup.picasso.Picasso;
 import java.io.Serializable;
 import java.util.List;

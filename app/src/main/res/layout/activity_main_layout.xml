@@ -35,8 +35,8 @@
       android:shadowDy="10"
       android:shadowRadius="4"
       android:shadowColor="@android:color/holo_orange_light"
-      android:textColor="@android:color/holo_blue_bright"
-      android:text="@string/smartDengg"
+      android:textColor="@color/homeLinkGreen"
+      android:text="@string/homelink"
   />
 
 </RelativeLayout>

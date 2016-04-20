@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.orhanobut.logger.Logger;
 import com.smartdengg.smartgallery.R;
-import com.smartdengg.smartgallery.entity.ImageEntity;
+import com.lianjiatech.infrastructure.smartgallery.entity.ImageEntity;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import java.io.File;

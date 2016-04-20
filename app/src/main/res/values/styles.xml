@@ -8,8 +8,8 @@
     <item name="colorAccent">@color/colorAccent</item>
   </style>
 
-  <style name="AppTheme.GrayActivity">
-    <item name="android:windowBackground">@android:color/darker_gray</item>
+  <style name="AppTheme.HomeGreen">
+    <item name="android:windowBackground">@color/homeLinkGreen</item>
     <item name="android:windowIsTranslucent">false</item>
     <item name="android:windowCloseOnTouchOutside">true</item>
   </style>

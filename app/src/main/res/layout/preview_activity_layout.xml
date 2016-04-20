@@ -39,7 +39,7 @@
       android:layout_gravity="end"
       android:textSize="@dimen/material_21sp"
       android:textColor="@android:color/white"
-      tools:text="1/8"
+      tools:text="1/9"
   />
 
 
