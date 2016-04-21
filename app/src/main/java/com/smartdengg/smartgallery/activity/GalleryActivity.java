@@ -8,7 +8,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,16 +28,17 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.lianjiatech.infrastructure.smartgallery.GalleryUseCase;
+import com.lianjiatech.infrastructure.smartgallery.entity.FolderEntity;
+import com.lianjiatech.infrastructure.smartgallery.entity.ImageEntity;
 import com.orhanobut.logger.Logger;
 import com.smartdengg.smartgallery.R;
 import com.smartdengg.smartgallery.adapter.GalleryFolderAdapter;
 import com.smartdengg.smartgallery.adapter.GalleryImageAdapter;
-import com.lianjiatech.infrastructure.smartgallery.GalleryUseCase;
-import com.lianjiatech.infrastructure.smartgallery.entity.FolderEntity;
-import com.lianjiatech.infrastructure.smartgallery.entity.ImageEntity;
-import com.smartdengg.smartgallery.ui.BottomSheetDialog;
-import com.smartdengg.smartgallery.ui.MarginDecoration;
+import rx.RxClick;
 import com.smartdengg.smartgallery.utils.BestBlur;
+import com.smartdengg.smartgallery.view.BottomSheetDialog;
+import com.smartdengg.smartgallery.view.MarginDecoration;
 import com.squareup.picasso.Picasso;
 import hugo.weaving.DebugLog;
 import java.util.ArrayList;
@@ -46,7 +46,6 @@ import java.util.List;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
-import rx.android.MainThreadSubscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -61,6 +60,7 @@ public class GalleryActivity extends AppCompatActivity {
     protected static final float BLUR_DESATURATE = 0.0f;
     protected static final int BLUR_SCALE = BLUR_RADIUS / 2;
     private static final int MAX_COUNT = 9;
+    private static final int SPAN_COUNT = 2;
 
     @NonNull
     @Bind(R.id.gallery_layout_count_tv)
@@ -92,8 +92,7 @@ public class GalleryActivity extends AppCompatActivity {
     private GalleryFolderAdapter galleryFolderAdapter;
     private FolderEntity currentFolderEntity;
 
-    private Subscription clickSubscription = Subscriptions.empty();
-    private Subscription gallerySubscription = Subscriptions.empty();
+    private Subscription subscription = Subscriptions.empty();
 
     /*缓存屏幕快照相关*/
     private Canvas canvas = null;
@@ -140,14 +139,14 @@ public class GalleryActivity extends AppCompatActivity {
             }
             galleryImageAdapter.updateItem(imageEntity);
 
-      /*设置数量*/
+             /*设置数量*/
             Integer size = selectedImageEntities.size();
             countTv.setText(size + "/" + MAX_COUNT);
             countTv.setTextColor((size == MAX_COUNT) ? Color.RED : Color.WHITE);
         }
     };
 
-    GalleryFolderAdapter.Callback folderCallback = new GalleryFolderAdapter.Callback() {
+    private GalleryFolderAdapter.Callback folderCallback = new GalleryFolderAdapter.Callback() {
         @Override
         public void onItemClick(FolderEntity folderEntity) {
 
@@ -184,7 +183,7 @@ public class GalleryActivity extends AppCompatActivity {
 
     private void initView(Bundle savedInstanceState) {
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(GalleryActivity.this, 2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(GalleryActivity.this, SPAN_COUNT);
         gridLayoutManager.setSmoothScrollbarEnabled(true);
 
         galleryImageAdapter = new GalleryImageAdapter(GalleryActivity.this);
@@ -195,48 +194,19 @@ public class GalleryActivity extends AppCompatActivity {
         recyclerView.addOnScrollListener(scrollListener);
         recyclerView.setAdapter(galleryImageAdapter);
 
-        clickSubscription = Observable.create(new Observable.OnSubscribe<Void>() {
-            @Override
-            public void call(final Subscriber<? super Void> subscriber) {
-
-                if (Looper.getMainLooper() != Looper.myLooper()) {
-                    throw new IllegalStateException("Must be called from the main thread. Was: " + Thread.currentThread());
-                }
-
-                View.OnClickListener onClickListener = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (!subscriber.isUnsubscribed()) subscriber.onNext(null);
-                    }
-                };
-                previewBtn.setOnClickListener(onClickListener);
-
-                subscriber.add(new MainThreadSubscription() {
-                    @Override
-                    protected void onUnsubscribe() {
-                        previewBtn.setOnClickListener(null);
-                    }
-                });
-            }
-        })
-                                      .filter(new Func1<Void, Boolean>() {
-                                          @Override
-                                          public Boolean call(Void aVoid) {
-                                              return GalleryActivity.this.selectedImageEntities.size() > 0;
-                                          }
-                                      })
-                                      .map(new Func1<Void, List<ImageEntity>>() {
-                                          @Override
-                                          public List<ImageEntity> call(Void aVoid) {
-                                              return GalleryActivity.this.selectedImageEntities;
-                                          }
-                                      })
-                                      .subscribe(new Action1<List<ImageEntity>>() {
-                                          @Override
-                                          public void call(List<ImageEntity> imageEntities) {
-                                              GalleryActivity.this.navigateToPreview(imageEntities);
-                                          }
-                                      });
+        RxClick.onClick(previewBtn)
+               .filter(new Func1<Void, Boolean>() {
+                   @Override
+                   public Boolean call(Void aVoid) {
+                       return GalleryActivity.this.selectedImageEntities.size() > 0;
+                   }
+               })
+               .forEach(new Action1<Void>() {
+                   @Override
+                   public void call(Void aVoid) {
+                       GalleryActivity.this.navigateToPreview(selectedImageEntities);
+                   }
+               });
 
         if (savedInstanceState == null) {
             final View rootView = bottomRl.getRootView()
@@ -276,41 +246,41 @@ public class GalleryActivity extends AppCompatActivity {
 
     @DebugLog
     private void loadGallery() {
-        gallerySubscription = GalleryUseCase.createdUseCase(GalleryActivity.this)
-                                            .retrieve()
-                                            .takeFirst(new Func1<List<FolderEntity>, Boolean>() {
-                                                @Override
-                                                public Boolean call(List<FolderEntity> folderEntities) {
-                                                    return !gallerySubscription.isUnsubscribed();
-                                                }
-                                            })
-                                            .observeOn(AndroidSchedulers.mainThread())
-                                            .subscribe(new Subscriber<List<FolderEntity>>() {
-                                                @Override
-                                                public void onCompleted() {
-                                                    ViewCompat.animate(bottomRl)
-                                                              .translationY(0.0f)
-                                                              .setStartDelay(getResources().getInteger(android.R.integer.config_longAnimTime))
-                                                              .withLayer();
-                                                }
+        subscription = GalleryUseCase.createdUseCase(GalleryActivity.this)
+                                     .retrieve()
+                                     .takeFirst(new Func1<List<FolderEntity>, Boolean>() {
+                                         @Override
+                                         public Boolean call(List<FolderEntity> folderEntities) {
+                                             return !subscription.isUnsubscribed();
+                                         }
+                                     })
+                                     .observeOn(AndroidSchedulers.mainThread())
+                                     .subscribe(new Subscriber<List<FolderEntity>>() {
+                                         @Override
+                                         public void onCompleted() {
+                                             ViewCompat.animate(bottomRl)
+                                                       .translationY(0.0f)
+                                                       .setStartDelay(getResources().getInteger(android.R.integer.config_longAnimTime))
+                                                       .withLayer();
+                                         }
 
-                                                @Override
-                                                public void onError(Throwable e) {
-                                                    Logger.t(0)
-                                                          .e(e.toString());
-                                                }
+                                         @Override
+                                         public void onError(Throwable e) {
+                                             Logger.t(0)
+                                                   .e(e.toString());
+                                         }
 
-                                                @Override
-                                                public void onNext(List<FolderEntity> galleryFolderEntities) {
+                                         @Override
+                                         public void onNext(List<FolderEntity> galleryFolderEntities) {
 
-                                                    GalleryActivity.this.galleryFolderEntities = galleryFolderEntities;
+                                             GalleryActivity.this.galleryFolderEntities = galleryFolderEntities;
 
-                                                    /*填充数据*/
-                                                    GalleryActivity.this.currentFolderEntity = galleryFolderEntities.get(0);
-                                                    Observable.just(currentFolderEntity.getImageEntities())
-                                                              .subscribe(GalleryActivity.this.galleryImageAdapter);
-                                                }
-                                            });
+                                             /*填充数据*/
+                                             GalleryActivity.this.currentFolderEntity = galleryFolderEntities.get(0);
+                                             Observable.just(currentFolderEntity.getImageEntities())
+                                                       .subscribe(GalleryActivity.this.galleryImageAdapter);
+                                         }
+                                     });
     }
 
     @NonNull
@@ -430,8 +400,7 @@ public class GalleryActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        this.clickSubscription.unsubscribe();
-        this.gallerySubscription.unsubscribe();
+        this.subscription.unsubscribe();
         ButterKnife.unbind(GalleryActivity.this);
     }
 }

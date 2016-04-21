@@ -9,18 +9,22 @@ import com.smartdengg.smartgallery.R;
 
 public class MainActivity extends AppCompatActivity {
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main_layout);
-    ButterKnife.bind(MainActivity.this);
-  }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main_layout);
+        ButterKnife.bind(MainActivity.this);
+    }
 
-  @NonNull @OnClick(R.id.gallery_button) protected void onGalleryClick() {
-    GalleryActivity.navigateToGallery(MainActivity.this);
-  }
+    @NonNull
+    @OnClick(R.id.gallery_button)
+    protected void onGalleryClick() {
+        GalleryActivity.navigateToGallery(MainActivity.this);
+    }
 
-  @Override protected void onDestroy() {
-    super.onDestroy();
-    ButterKnife.unbind(MainActivity.this);
-  }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ButterKnife.unbind(MainActivity.this);
+    }
 }

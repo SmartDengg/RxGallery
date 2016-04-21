@@ -8,23 +8,23 @@ import android.content.res.TypedArray;
  */
 public class DensityUtil {
 
-  private static int actionBarSize;
+    private static int actionBarSize;
 
-  /**
-   * 获取ActionBarSize
-   */
-  public static int getActionBarSize(Context context) {
+    /**
+     * 获取ActionBarSize
+     */
+    public static int getActionBarSize(Context context) {
 
-    if (actionBarSize == 0) {
-      TypedArray actionbarSizeTypedArray = null;
-      try {
-        actionbarSizeTypedArray = context.obtainStyledAttributes(new int[] { android.R.attr.actionBarSize });
-        actionBarSize = (int) actionbarSizeTypedArray.getDimension(0, 0);
-      } finally {
-        actionbarSizeTypedArray.recycle();
-      }
+        if (actionBarSize == 0) {
+            TypedArray actionbarSizeTypedArray = null;
+            try {
+                actionbarSizeTypedArray = context.obtainStyledAttributes(new int[] { android.R.attr.actionBarSize });
+                actionBarSize = (int) actionbarSizeTypedArray.getDimension(0, 0);
+            } finally {
+                actionbarSizeTypedArray.recycle();
+            }
+        }
+
+        return actionBarSize;
     }
-
-    return actionBarSize;
-  }
 }

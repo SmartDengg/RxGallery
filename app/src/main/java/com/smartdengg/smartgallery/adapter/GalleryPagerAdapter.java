@@ -20,59 +20,67 @@ import rx.Observer;
  */
 public class GalleryPagerAdapter extends PagerAdapter implements Observer<List<ImageEntity>> {
 
-  private Context context;
-  private List<ImageEntity> items;
+    private Context context;
+    private List<ImageEntity> items;
 
-  public GalleryPagerAdapter(Context context) {
-    this.context = context;
-  }
+    public GalleryPagerAdapter(Context context) {
+        this.context = context;
+    }
 
-  @Override public Object instantiateItem(ViewGroup container, int position) {
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
 
-    View page = LayoutInflater.from(context).inflate(R.layout.gallery_item, container, false);
-    //page.setBackgroundColor(Color.argb(255, position * 50, position * 10, position * 50));
+        View page = LayoutInflater.from(context)
+                                  .inflate(R.layout.gallery_item, container, false);
+        //page.setBackgroundColor(Color.argb(255, position * 50, position * 10, position * 50));
 
-    ImageView imageView = (ImageView) page.findViewById(R.id.gallery_item_iv);
+        ImageView imageView = (ImageView) page.findViewById(R.id.gallery_item_iv);
 
-    String imagePath = this.items.get(position).getImagePath();
-    Picasso
-        .with(context)
-        .load(new File(imagePath))
-        .placeholder(R.drawable.holder)
-        .error(R.drawable.holder)
-        .networkPolicy(NetworkPolicy.NO_CACHE)
-        .fit()
-        .centerInside()
-        .noFade()
-        .tag(imagePath)
-        .into(imageView);
+        String imagePath = this.items.get(position)
+                                     .getImagePath();
+        Picasso.with(context)
+               .load(new File(imagePath))
+               .placeholder(R.drawable.holder)
+               .error(R.drawable.holder)
+               .networkPolicy(NetworkPolicy.NO_CACHE)
+               .fit()
+               .centerInside()
+               .noFade()
+               .tag(imagePath)
+               .into(imageView);
 
-    container.addView(page);
+        container.addView(page);
 
-    return page;
-  }
+        return page;
+    }
 
-  @Override public int getCount() {
-    return (this.items != null) ? (this.items.size()) : 0;
-  }
+    @Override
+    public int getCount() {
+        return (this.items != null) ? (this.items.size()) : 0;
+    }
 
-  @Override public boolean isViewFromObject(View view, Object object) {
-    return view == object;
-  }
+    @Override
+    public boolean isViewFromObject(View view, Object object) {
+        return view == object;
+    }
 
-  @Override public void destroyItem(ViewGroup container, int position, Object object) {
-    container.removeView((View) object);
-  }
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        container.removeView((View) object);
+    }
 
-  @Override public void onCompleted() {
-    GalleryPagerAdapter.this.notifyDataSetChanged();
-  }
+    @Override
+    public void onCompleted() {
+        GalleryPagerAdapter.this.notifyDataSetChanged();
+    }
 
-  @Override public void onError(Throwable e) {
-    Logger.e(e.toString());
-  }
+    @Override
+    public void onError(Throwable e) {
+        Logger.e(e.toString());
+    }
 
-  @Override public void onNext(List<ImageEntity> imageEntities) {
-    this.items = imageEntities;
-  }
+    @Override
+    public void onNext(List<ImageEntity> imageEntities) {
+        this.items = imageEntities;
+    }
 }
