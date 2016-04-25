@@ -42,7 +42,9 @@ public class GalleryUseCase {
         return new GalleryUseCase(context);
     }
 
-    public Observable<List<FolderEntity>> retrieve() {
+    //@formatter:on
+    public Observable<List<FolderEntity>> retrieveGallery() {
+
         return Observable.create(new Observable.OnSubscribe<Cursor>() {
             @Override
             public void call(final Subscriber<? super Cursor> subscriber) {
@@ -64,12 +66,12 @@ public class GalleryUseCase {
                 } else {
                     try {
                         while (cursor.moveToNext()) {
-                            if (cursor.getString(cursor.getColumnIndexOrThrow(GALLERY_PROJECTION[0]))
-                                      .endsWith(".gif")) {
-                                continue;
-                            }
 
-                            if (cursor.isClosed() || subscriber.isUnsubscribed()) break;
+                            //@formatter:off
+                            /**exclude .gif*/
+                            if (cursor.getString(cursor.getColumnIndexOrThrow(GALLERY_PROJECTION[0])).endsWith(".gif"))
+                                continue;
+
                             subscriber.onNext(cursor);
                         }
                     } catch (Exception e) {
@@ -81,6 +83,12 @@ public class GalleryUseCase {
                 }
             }
         })
+                         .takeUntil(new Func1<Cursor, Boolean>() {
+                             @Override
+                             public Boolean call(Cursor cursor) {
+                                 return cursor.isClosed();
+                             }
+                         })
                          .onBackpressureBuffer()
                          .map(new Func1<Cursor, ImageEntity>() {
                              @Override
@@ -158,6 +166,5 @@ public class GalleryUseCase {
                              }
                          })
                          .subscribeOn(Schedulers.io());
-
     }
 }

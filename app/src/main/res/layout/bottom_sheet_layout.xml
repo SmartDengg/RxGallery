@@ -10,7 +10,7 @@
       android:layout_width="match_parent"
       android:layout_height="@dimen/material_400dp"
       android:layout_gravity="bottom"
-      android:background="@android:color/darker_gray"
+      android:background="@color/homeLinkGreen"
   />
 
 </android.support.design.widget.CoordinatorLayout>

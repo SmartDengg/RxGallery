@@ -35,7 +35,7 @@ public class DebounceClickProducer<T> extends AtomicBoolean implements Subscript
 
         if (!subscriber.isUnsubscribed()) {
 
-            DebounceClickProducer.this.set(false);
+            this.set(false);
             subscriber.onNext(null);
             view.post(clickable);
         }

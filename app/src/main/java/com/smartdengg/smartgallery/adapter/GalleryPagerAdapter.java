@@ -76,7 +76,8 @@ public class GalleryPagerAdapter extends PagerAdapter implements Observer<List<I
 
     @Override
     public void onError(Throwable e) {
-        Logger.e(e.toString());
+        Logger.t(0)
+              .e(e.toString());
     }
 
     @Override

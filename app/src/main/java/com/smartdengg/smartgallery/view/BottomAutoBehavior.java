@@ -1,4 +1,4 @@
-package com.smartdengg.smartgallery.manager;
+package com.smartdengg.smartgallery.view;
 
 import android.content.Context;
 import android.support.design.widget.CoordinatorLayout;

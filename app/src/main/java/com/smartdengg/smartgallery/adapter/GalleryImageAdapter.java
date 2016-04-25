@@ -63,12 +63,12 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
 
     private void bindValue(ViewHolder holder, int position, ImageEntity entity) {
 
-    /*无增删操作，所以，position可以作为唯一变量*/
+        /*无增删操作，所以，position可以作为唯一变量*/
         holder.rootView.setTag(position);
 
         String thumbUrl = entity.getImagePath();
         if (thumbUrl != null) {
-      /*Sorry for my poor english, but you must be careful of this file,because it may be load fail*/
+            /*Sorry for my poor english, but you must be careful of this file,because it may be load fail*/
             Picasso picasso = Picasso.with(context);
             //picasso.setIndicatorsEnabled(true);
             /**
@@ -90,7 +90,7 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
                    .fit()
                    .centerCrop()
                    .noFade()
-                   .tag(thumbUrl)
+                   .tag(context)
                    .into(holder.thumbIv);
         }
 

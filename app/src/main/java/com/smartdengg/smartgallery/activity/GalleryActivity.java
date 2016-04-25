@@ -139,7 +139,7 @@ public class GalleryActivity extends AppCompatActivity {
             }
             galleryImageAdapter.updateItem(imageEntity);
 
-             /*设置数量*/
+            /*设置数量*/
             Integer size = selectedImageEntities.size();
             countTv.setText(size + "/" + MAX_COUNT);
             countTv.setTextColor((size == MAX_COUNT) ? Color.RED : Color.WHITE);
@@ -247,7 +247,7 @@ public class GalleryActivity extends AppCompatActivity {
     @DebugLog
     private void loadGallery() {
         subscription = GalleryUseCase.createdUseCase(GalleryActivity.this)
-                                     .retrieve()
+                                     .retrieveGallery()
                                      .takeFirst(new Func1<List<FolderEntity>, Boolean>() {
                                          @Override
                                          public Boolean call(List<FolderEntity> folderEntities) {
