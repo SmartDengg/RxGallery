@@ -45,7 +45,7 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
         this.normalColor = context.getResources()
                                   .getColor(android.R.color.transparent);
         this.selectedColor = context.getResources()
-                                    .getColor(R.color.homeLinkGreen);
+                                    .getColor(R.color.design_red);
     }
 
     @Override
@@ -134,7 +134,7 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
 
     @Override
     public void onError(Throwable e) {
-        Logger.e(e.toString());
+        Logger.t(0).e(e.toString());
     }
 
     @Override
@@ -174,7 +174,6 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
             }
         }
     }
-
     public void setCallback(Callback callback) {
         this.callback = callback;
     }

@@ -4,5 +4,6 @@
   <color name="colorPrimaryDark">#303F9F</color>
   <color name="colorAccent">#FF4081</color>
 
+  <color name="design_red">#DA498C</color>
   <color name="homeLinkGreen">#00ae66</color>
 </resources>
