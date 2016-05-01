@@ -20,7 +20,7 @@
       android:paddingLeft="@dimen/material_8dp"
       android:paddingRight="@dimen/material_8dp"
       android:scaleType="centerInside"
-      android:src="@drawable/cancel"
+      android:src="@drawable/ic_back"
       android:tint="@android:color/white" />
 
     <TextView

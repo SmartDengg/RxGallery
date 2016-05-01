@@ -9,19 +9,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
+import com.lianjiatech.infrastructure.smartgallery.entity.ImageEntity;
 import com.orhanobut.logger.Logger;
 import com.smartdengg.smartgallery.R;
-import com.lianjiatech.infrastructure.smartgallery.entity.ImageEntity;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.List;
 import rx.Observer;
+import rx.RxDebounceClick;
+import rx.functions.Action1;
 
 /**
  * GalleryImageAdapter
@@ -61,10 +61,18 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
         GalleryImageAdapter.this.runEnterAnimation(holder.itemView, position);
     }
 
-    private void bindValue(ViewHolder holder, int position, ImageEntity entity) {
+    private void bindValue(ViewHolder holder, final int position, ImageEntity entity) {
 
-        /*无增删操作，所以，position可以作为唯一变量*/
-        holder.rootView.setTag(position);
+        RxDebounceClick.onClick(holder.thumbIv)
+                       .forEach(new Action1<Void>() {
+                           @Override
+                           public void call(Void aVoid) {
+
+                               if (callback != null) {
+                                   callback.onItemClick(items.get(position));
+                               }
+                           }
+                       });
 
         String thumbUrl = entity.getImagePath();
         if (thumbUrl != null) {
@@ -94,7 +102,7 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
                    .into(holder.thumbIv);
         }
 
-        holder.rootView.setBackgroundColor(entity.isChecked() ? selectedColor : normalColor);
+        holder.itemView.setBackgroundColor(entity.isChecked() ? selectedColor : normalColor);
     }
 
     private void runEnterAnimation(View itemView, int position) {
@@ -134,7 +142,8 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
 
     @Override
     public void onError(Throwable e) {
-        Logger.t(0).e(e.toString());
+        Logger.t(0)
+              .e(e.toString());
     }
 
     @Override
@@ -153,9 +162,6 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         @NonNull
-        @Bind(R.id.gallery_image_item_root_view)
-        protected FrameLayout rootView;
-        @NonNull
         @Bind(R.id.gallery_image_item_thumb_iv)
         protected ImageView thumbIv;
 
@@ -163,17 +169,8 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
             super(itemView);
             ButterKnife.bind(ViewHolder.this, itemView);
         }
-
-        @NonNull
-        @OnClick(R.id.gallery_image_item_thumb_iv)
-        protected void onItemClick() {
-
-            Integer position = (Integer) rootView.getTag();
-            if (callback != null && position != null) {
-                callback.onItemClick(items.get(position));
-            }
-        }
     }
+
     public void setCallback(Callback callback) {
         this.callback = callback;
     }
