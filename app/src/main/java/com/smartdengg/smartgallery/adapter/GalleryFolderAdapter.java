@@ -8,18 +8,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
+import com.lianjiatech.infrastructure.smartgallery.entity.FolderEntity;
 import com.orhanobut.logger.Logger;
 import com.smartdengg.smartgallery.R;
-import com.lianjiatech.infrastructure.smartgallery.entity.FolderEntity;
 import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.List;
 import rx.Observer;
+import rx.RxDebounceClick;
+import rx.functions.Action1;
 
 /**
  * Created by SmartDengg on 2016/3/5.
@@ -42,10 +42,7 @@ public class GalleryFolderAdapter extends RecyclerView.Adapter<GalleryFolderAdap
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-
-     /*无增删操作，所以，position可以作为唯一变量*/
-        holder.rootView.setTag(position);
+    public void onBindViewHolder(ViewHolder holder, final int position) {
 
         FolderEntity entity = items.get(position);
 
@@ -53,9 +50,19 @@ public class GalleryFolderAdapter extends RecyclerView.Adapter<GalleryFolderAdap
         holder.countTv.setText(entity.getImageCount() + "");
         holder.flagIv.setVisibility(entity.isChecked() ? View.VISIBLE : View.GONE);
 
+        RxDebounceClick.onClick(holder.itemView)
+                       .forEach(new Action1<Void>() {
+                           @Override
+                           public void call(Void aVoid) {
+                               if (callback != null) {
+                                   callback.onItemClick(items.get(position));
+                               }
+                           }
+                       });
+
         String thumbUrl = entity.getThumbPath();
         if (thumbUrl != null) {
-      /*Sorry for my poor english, but you must be careful of this file,because it may be load fail*/
+            /*Sorry for my poor english, but you must be careful of this file,because it may be load fail*/
             Picasso.with(context)
                    .load(new File(thumbUrl))
                    .placeholder(R.drawable.holder)
@@ -101,10 +108,6 @@ public class GalleryFolderAdapter extends RecyclerView.Adapter<GalleryFolderAdap
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         @NonNull
-        @Bind(R.id.gallery_folder_item_root_view)
-        protected RelativeLayout rootView;
-
-        @NonNull
         @Bind(R.id.gallery_folder_item_thumb_iv)
         protected ImageView coverIv;
         @NonNull
@@ -120,16 +123,6 @@ public class GalleryFolderAdapter extends RecyclerView.Adapter<GalleryFolderAdap
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(ViewHolder.this, itemView);
-        }
-
-        @NonNull
-        @OnClick(R.id.gallery_folder_item_root_view)
-        protected void onItemClick() {
-
-            Integer position = (Integer) rootView.getTag();
-            if (callback != null && position != null) {
-                callback.onItemClick(items.get(position));
-            }
         }
     }
 

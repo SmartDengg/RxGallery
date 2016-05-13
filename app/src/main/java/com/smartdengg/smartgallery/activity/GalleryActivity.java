@@ -35,7 +35,6 @@ import com.orhanobut.logger.Logger;
 import com.smartdengg.smartgallery.R;
 import com.smartdengg.smartgallery.adapter.GalleryFolderAdapter;
 import com.smartdengg.smartgallery.adapter.GalleryImageAdapter;
-import rx.RxClick;
 import com.smartdengg.smartgallery.utils.BestBlur;
 import com.smartdengg.smartgallery.view.BottomSheetDialog;
 import com.smartdengg.smartgallery.view.MarginDecoration;
@@ -44,6 +43,7 @@ import hugo.weaving.DebugLog;
 import java.util.ArrayList;
 import java.util.List;
 import rx.Observable;
+import rx.RxDebounceClick;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -194,19 +194,19 @@ public class GalleryActivity extends AppCompatActivity {
         recyclerView.addOnScrollListener(scrollListener);
         recyclerView.setAdapter(galleryImageAdapter);
 
-        RxClick.onClick(previewBtn)
-               .filter(new Func1<Void, Boolean>() {
-                   @Override
-                   public Boolean call(Void aVoid) {
-                       return GalleryActivity.this.selectedImageEntities.size() > 0;
-                   }
-               })
-               .forEach(new Action1<Void>() {
-                   @Override
-                   public void call(Void aVoid) {
-                       GalleryActivity.this.navigateToPreview(selectedImageEntities);
-                   }
-               });
+        RxDebounceClick.onClick(previewBtn)
+                       .filter(new Func1<Void, Boolean>() {
+                           @Override
+                           public Boolean call(Void aVoid) {
+                               return GalleryActivity.this.selectedImageEntities.size() > 0;
+                           }
+                       })
+                       .forEach(new Action1<Void>() {
+                           @Override
+                           public void call(Void aVoid) {
+                               GalleryActivity.this.navigateToPreview(selectedImageEntities);
+                           }
+                       });
 
         if (savedInstanceState == null) {
             final View rootView = bottomRl.getRootView()

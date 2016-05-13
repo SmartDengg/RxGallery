@@ -1,6 +1,7 @@
 package com.smartdengg.smartgallery.view;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -23,11 +24,15 @@ import com.smartdengg.smartgallery.R;
  */
 public class BottomSheetDialog extends AppCompatDialog {
 
+    private Context context;
+
     public BottomSheetDialog(Activity activity) {
         super(activity);
         getWindow().setGravity(Gravity.BOTTOM);
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         getWindow().setWindowAnimations(R.style.AnimBottom);
+
+        this.context = activity;
     }
 
     @Override
@@ -97,7 +102,8 @@ public class BottomSheetDialog extends AppCompatDialog {
             return true;
         }
         TypedValue value = new TypedValue();
-        return getContext().getTheme()
-                           .resolveAttribute(android.R.attr.windowCloseOnTouchOutside, value, true) && value.data != 0;
+        boolean b = this.context.getTheme()
+                                .resolveAttribute(android.R.attr.windowCloseOnTouchOutside, value, true);
+        return b && value.data != 0;
     }
 }

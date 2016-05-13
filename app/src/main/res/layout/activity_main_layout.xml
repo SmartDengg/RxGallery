@@ -19,7 +19,6 @@
       android:paddingEnd="@dimen/material_24dp"
       android:paddingTop="@dimen/material_16dp"
       android:paddingBottom="@dimen/material_16dp"
-      android:clickable="true"
       android:text="open gallery"
       android:background="@drawable/button_background_selector"
   />

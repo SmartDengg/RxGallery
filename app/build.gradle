@@ -42,6 +42,7 @@ dependencies {
   compile 'com.squareup.okhttp3:logging-interceptor:3.0.1'
   /*ReactiveX Library*/
   compile 'io.reactivex:rxandroid:1.1.0'
+  compile 'com.github.SmartDengg:RxDebounceClick:0.0.1'
   /*Third Library*/
   compile 'com.orhanobut:logger:1.11'
   compile project(':smartgallery')
