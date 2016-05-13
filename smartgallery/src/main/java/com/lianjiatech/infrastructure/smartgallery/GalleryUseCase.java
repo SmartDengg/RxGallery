@@ -104,6 +104,8 @@ public class GalleryUseCase {
                                  clone.setImageName(imageName);
                                  clone.setDate(addDate);
 
+                                 System.out.println("Name:  "+imageName+"   Path: "+imagePath);
+
                                  return clone;
                              }
                          })
