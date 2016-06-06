@@ -131,6 +131,8 @@ public class GalleryUseCase {
                                  clone.setSize(size);
                                  clone.setModifyDate(modifyDate);
 
+                                 System.out.println("Name:  "+imageName+"   Path: "+imagePath);
+
                                  return clone;
                              }
                          })
