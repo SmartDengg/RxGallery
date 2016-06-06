@@ -3,6 +3,7 @@ package com.lianjiatech.infrastructure.smartgallery;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.database.Cursor;
+import android.os.Build;
 import android.provider.MediaStore;
 import com.lianjiatech.infrastructure.smartgallery.entity.FolderEntity;
 import com.lianjiatech.infrastructure.smartgallery.entity.ImageEntity;
@@ -22,10 +23,10 @@ import rx.subscriptions.Subscriptions;
  */
 public class GalleryUseCase {
 
-    private final String[] GALLERY_PROJECTION = {
-            MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATE_ADDED,
-            MediaStore.Images.Media._ID
-    };
+    private String[] GALLERY_PROJECTION =
+            { MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATE_ADDED,
+                    MediaStore.Images.Media._ID, MediaStore.Images.Media.TITLE, MediaStore.Images.Media.MIME_TYPE,
+                    MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DATE_MODIFIED };
 
     private final CursorLoader cursorLoader;
     private List<FolderEntity> items = new ArrayList<>();
@@ -34,6 +35,14 @@ public class GalleryUseCase {
     private ImageEntity imageEntity = new ImageEntity();
 
     private GalleryUseCase(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            GALLERY_PROJECTION =
+                    new String[] { MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATE_ADDED,
+                            MediaStore.Images.Media._ID, MediaStore.Images.Media.TITLE, MediaStore.Images.Media.MIME_TYPE,
+                            MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DATE_MODIFIED, MediaStore.Images.Media.WIDTH,
+                            MediaStore.Images.Media.HEIGHT };
+        }
+
         this.cursorLoader = new CursorLoader(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, GALLERY_PROJECTION, null, null,
                 GALLERY_PROJECTION[2] + " DESC");
     }
@@ -42,7 +51,6 @@ public class GalleryUseCase {
         return new GalleryUseCase(context);
     }
 
-    //@formatter:on
     public Observable<List<FolderEntity>> retrieveGallery() {
 
         return Observable.create(new Observable.OnSubscribe<Cursor>() {
@@ -67,10 +75,11 @@ public class GalleryUseCase {
                     try {
                         while (cursor.moveToNext()) {
 
-                            //@formatter:off
                             /**exclude .gif*/
-                            if (cursor.getString(cursor.getColumnIndexOrThrow(GALLERY_PROJECTION[0])).endsWith(".gif"))
+                            if (cursor.getString(cursor.getColumnIndexOrThrow(GALLERY_PROJECTION[0]))
+                                      .endsWith(".gif")) {
                                 continue;
+                            }
 
                             subscriber.onNext(cursor);
                         }
@@ -97,12 +106,30 @@ public class GalleryUseCase {
                                  String imagePath = cursor.getString(cursor.getColumnIndexOrThrow(GALLERY_PROJECTION[0]));
                                  String imageName = cursor.getString(cursor.getColumnIndexOrThrow(GALLERY_PROJECTION[1]));
                                  long addDate = cursor.getLong(cursor.getColumnIndexOrThrow(GALLERY_PROJECTION[2]));
+                                 long id = cursor.getLong(cursor.getColumnIndexOrThrow(GALLERY_PROJECTION[3]));
+                                 String title = cursor.getString(cursor.getColumnIndexOrThrow(GALLERY_PROJECTION[4]));
+                                 String mimeType = cursor.getString(cursor.getColumnIndexOrThrow(GALLERY_PROJECTION[5]));
+
+                                 long size = cursor.getLong(cursor.getColumnIndexOrThrow(GALLERY_PROJECTION[6]));
+                                 long modifyDate = cursor.getLong(cursor.getColumnIndexOrThrow(GALLERY_PROJECTION[7]));
 
                                  ImageEntity clone = imageEntity.newInstance();
 
+                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                                     String width = cursor.getString(cursor.getColumnIndexOrThrow(GALLERY_PROJECTION[8]));
+                                     String Height = cursor.getString(cursor.getColumnIndexOrThrow(GALLERY_PROJECTION[9]));
+                                     clone.setWidth(width);
+                                     clone.setHeight(Height);
+                                 }
+
                                  clone.setImagePath(imagePath);
                                  clone.setImageName(imageName);
-                                 clone.setDate(addDate);
+                                 clone.setAddDate(addDate);
+                                 clone.setId(id);
+                                 clone.setTitle(title);
+                                 clone.setMimeType(mimeType);
+                                 clone.setSize(size);
+                                 clone.setModifyDate(modifyDate);
 
                                  return clone;
                              }

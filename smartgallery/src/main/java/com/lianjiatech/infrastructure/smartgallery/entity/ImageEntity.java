@@ -8,103 +8,203 @@ import android.os.Parcelable;
  */
 public class ImageEntity implements Cloneable, Parcelable {
 
-  private String imageName;
-  private String imagePath;
-  private long date;
+    private String imagePath;
+    private String imageName;
+    private long id;
+    private long addDate;
 
-  private boolean isChecked = false;
+    private String title;
+    private String mimeType;
+    private String width;
+    private String height;
 
-  public ImageEntity() {
-  }
+    private long size;
+    private long modifyDate;
 
-  public ImageEntity newInstance() {
+    private boolean isChecked = false;
 
-    try {
-      return (ImageEntity) super.clone();
-    } catch (CloneNotSupportedException e) {
-      e.printStackTrace();
+    public ImageEntity() {
     }
-    return new ImageEntity();
-  }
 
-  public String getImageName() {
-    return imageName;
-  }
+    public ImageEntity newInstance() {
 
-  public void setImageName(String imageName) {
-    this.imageName = imageName;
-  }
+        try {
+            return (ImageEntity) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return new ImageEntity();
+    }
 
-  public String getImagePath() {
-    return imagePath;
-  }
+    public String getImagePath() {
+        return imagePath;
+    }
 
-  public void setImagePath(String imagePath) {
-    this.imagePath = imagePath;
-  }
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
 
-  public long getDate() {
-    return date;
-  }
+    public String getImageName() {
+        return imageName;
+    }
 
-  public void setDate(long date) {
-    this.date = date;
-  }
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
 
-  public boolean isChecked() {
-    return isChecked;
-  }
+    public long getId() {
+        return id;
+    }
 
-  public void setChecked(boolean checked) {
-    isChecked = checked;
-  }
+    public void setId(long id) {
+        this.id = id;
+    }
 
-  @Override public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    public long getAddDate() {
+        return addDate;
+    }
 
-    ImageEntity that = (ImageEntity) o;
+    public void setAddDate(long addDate) {
+        this.addDate = addDate;
+    }
 
-    return this.imageName.equalsIgnoreCase(that.getImageName()) &&  //
-        this.imagePath.equalsIgnoreCase(that.getImagePath());
-  }
+    public String getTitle() {
+        return title;
+    }
 
-  @Override public int hashCode() {
-    int result = imageName != null ? imageName.hashCode() : 0;
-    result = 31 * result + (imagePath != null ? imagePath.hashCode() : 0);
-    result = 31 * result + (int) (date ^ (date >>> 32));
-    result = 31 * result + (isChecked ? 1 : 0);
-    return result;
-  }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-  @Override public String toString() {
-    return "ImageEntity{" +
-        "imageName='" + imageName + '\'' +
-        ", imagePath='" + imagePath + '\'' +
-        ", date=" + date +
-        ", isChecked=" + isChecked +
-        '}';
-  }
+    public String getMimeType() {
+        return mimeType;
+    }
 
-  @Override public int describeContents() { return 0; }
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
 
-  @Override public void writeToParcel(Parcel dest, int flags) {
-    dest.writeString(this.imageName);
-    dest.writeString(this.imagePath);
-    dest.writeLong(this.date);
-    dest.writeByte(isChecked ? (byte) 1 : (byte) 0);
-  }
+    public String getWidth() {
+        return width;
+    }
 
-  protected ImageEntity(Parcel in) {
-    this.imageName = in.readString();
-    this.imagePath = in.readString();
-    this.date = in.readLong();
-    this.isChecked = in.readByte() != 0;
-  }
+    public void setWidth(String width) {
+        this.width = width;
+    }
 
-  public static final Creator<ImageEntity> CREATOR = new Creator<ImageEntity>() {
-    public ImageEntity createFromParcel(Parcel source) {return new ImageEntity(source);}
+    public String getHeight() {
+        return height;
+    }
 
-    public ImageEntity[] newArray(int size) {return new ImageEntity[size];}
-  };
+    public void setHeight(String height) {
+        this.height = height;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public long getModifyDate() {
+        return modifyDate;
+    }
+
+    public void setModifyDate(long modifyDate) {
+        this.modifyDate = modifyDate;
+    }
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ImageEntity that = (ImageEntity) o;
+
+        return this.imageName.equalsIgnoreCase(that.getImageName()) &&  //
+                this.imagePath.equalsIgnoreCase(that.getImagePath());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = imagePath != null ? imagePath.hashCode() : 0;
+        result = 31 * result + (imageName != null ? imageName.hashCode() : 0);
+        result = 31 * result + (int) (id ^ (id >>> 32));
+        result = 31 * result + (int) (addDate ^ (addDate >>> 32));
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (mimeType != null ? mimeType.hashCode() : 0);
+        result = 31 * result + (width != null ? width.hashCode() : 0);
+        result = 31 * result + (height != null ? height.hashCode() : 0);
+        result = 31 * result + (int) (size ^ (size >>> 32));
+        result = 31 * result + (int) (modifyDate ^ (modifyDate >>> 32));
+        result = 31 * result + (isChecked ? 1 : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "ImageEntity{" +
+                "imagePath='" + imagePath + '\'' +
+                ", imageName='" + imageName + '\'' +
+                ", id=" + id +
+                ", addDate=" + addDate +
+                ", title='" + title + '\'' +
+                ", mimeType='" + mimeType + '\'' +
+                ", width='" + width + '\'' +
+                ", height='" + height + '\'' +
+                ", size=" + size +
+                ", modifyDate=" + modifyDate +
+                ", isChecked=" + isChecked +
+                '}';
+    }
+
+    @Override
+    public int describeContents() { return 0; }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.imagePath);
+        dest.writeString(this.imageName);
+        dest.writeLong(this.id);
+        dest.writeLong(this.addDate);
+        dest.writeString(this.title);
+        dest.writeString(this.mimeType);
+        dest.writeString(this.width);
+        dest.writeString(this.height);
+        dest.writeLong(this.size);
+        dest.writeLong(this.modifyDate);
+        dest.writeByte(this.isChecked ? (byte) 1 : (byte) 0);
+    }
+
+    protected ImageEntity(Parcel in) {
+        this.imagePath = in.readString();
+        this.imageName = in.readString();
+        this.id = in.readLong();
+        this.addDate = in.readLong();
+        this.title = in.readString();
+        this.mimeType = in.readString();
+        this.width = in.readString();
+        this.height = in.readString();
+        this.size = in.readLong();
+        this.modifyDate = in.readLong();
+        this.isChecked = in.readByte() != 0;
+    }
+
+    public static final Creator<ImageEntity> CREATOR = new Creator<ImageEntity>() {
+        @Override
+        public ImageEntity createFromParcel(Parcel source) {return new ImageEntity(source);}
+
+        @Override
+        public ImageEntity[] newArray(int size) {return new ImageEntity[size];}
+    };
 }
