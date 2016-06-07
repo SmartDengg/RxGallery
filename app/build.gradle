@@ -45,5 +45,5 @@ dependencies {
   compile 'com.github.SmartDengg:RxDebounceClick:0.0.1'
   /*Third Library*/
   compile 'com.orhanobut:logger:1.11'
-  compile project(':smartgallery')
+  compile project(':rxgallery')
 }
