@@ -10,16 +10,16 @@ buildscript {
   }
 }
 android {
-  compileSdkVersion 23
-  buildToolsVersion '23.0.2'
+  compileSdkVersion rootProject.ext.android.compileSdkVersion
+  buildToolsVersion rootProject.ext.android.buildToolsVersion
 
   defaultConfig {
-    applicationId "com.smartdengg.smartgallery"
-    minSdkVersion 14
-    targetSdkVersion 23
-    versionCode 1
-    versionName "1.0"
-    renderscriptTargetApi 19
+    applicationId rootProject.ext.android.applicationId
+    minSdkVersion rootProject.ext.android.minSdkVersion
+    targetSdkVersion rootProject.ext.android.targetSdkVersion
+    versionCode rootProject.ext.android.versionCode
+    versionName rootProject.ext.android.versionName
+    renderscriptTargetApi rootProject.ext.android.renderscriptTargetApi
     renderscriptSupportModeEnabled true
   }
   buildTypes {
@@ -33,17 +33,16 @@ android {
 dependencies {
   compile fileTree(dir: 'libs', include: ['*.jar'])
   /*Google Library*/
-  compile 'com.google.code.gson:gson:2.6.1'
-  compile 'com.android.support:recyclerview-v7:23.2.0'
-  compile 'com.android.support:design:23.2.0'
+  compile rootProject.ext.dependencies.libGson
+  compile rootProject.ext.dependencies.libRecyclerView
+  compile rootProject.ext.dependencies.libDesign
   /*Square Library*/
-  compile 'com.jakewharton:butterknife:7.0.1'
-  compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
-  compile 'com.squareup.okhttp3:logging-interceptor:3.0.1'
+  compile rootProject.ext.dependencies.libButterknife
+  compile rootProject.ext.dependencies.libPicasso_Downloader
   /*ReactiveX Library*/
-  compile 'io.reactivex:rxandroid:1.1.0'
-  compile 'com.github.SmartDengg:RxDebounceClick:0.0.1'
+  compile rootProject.ext.dependencies.libRxAndroid
+  compile rootProject.ext.dependencies.libRxDebounce
   /*Third Library*/
-  compile 'com.orhanobut:logger:1.11'
+  compile rootProject.ext.dependencies.libLogger
   compile project(':rxgallery')
 }

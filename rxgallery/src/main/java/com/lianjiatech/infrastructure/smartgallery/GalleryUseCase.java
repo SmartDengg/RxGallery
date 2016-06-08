@@ -23,10 +23,13 @@ import rx.subscriptions.Subscriptions;
  */
 public class GalleryUseCase {
 
-    private String[] GALLERY_PROJECTION =
-            { MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATE_ADDED,
-                    MediaStore.Images.Media._ID, MediaStore.Images.Media.TITLE, MediaStore.Images.Media.MIME_TYPE,
-                    MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DATE_MODIFIED };
+    private String name;
+
+    private String[] GALLERY_PROJECTION = {
+            MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATE_ADDED,
+            MediaStore.Images.Media._ID, MediaStore.Images.Media.TITLE, MediaStore.Images.Media.MIME_TYPE, MediaStore.Images.Media.SIZE,
+            MediaStore.Images.Media.DATE_MODIFIED
+    };
 
     private final CursorLoader cursorLoader;
     private List<FolderEntity> items = new ArrayList<>();
@@ -34,13 +37,16 @@ public class GalleryUseCase {
     private FolderEntity folderEntity = new FolderEntity();
     private ImageEntity imageEntity = new ImageEntity();
 
-    private GalleryUseCase(Context context) {
+    private GalleryUseCase(Context context, String name) {
+        this.name = name;
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            GALLERY_PROJECTION =
-                    new String[] { MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATE_ADDED,
-                            MediaStore.Images.Media._ID, MediaStore.Images.Media.TITLE, MediaStore.Images.Media.MIME_TYPE,
-                            MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DATE_MODIFIED, MediaStore.Images.Media.WIDTH,
-                            MediaStore.Images.Media.HEIGHT };
+            GALLERY_PROJECTION = new String[] {
+                    MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATE_ADDED,
+                    MediaStore.Images.Media._ID, MediaStore.Images.Media.TITLE, MediaStore.Images.Media.MIME_TYPE,
+                    MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DATE_MODIFIED, MediaStore.Images.Media.WIDTH,
+                    MediaStore.Images.Media.HEIGHT
+            };
         }
 
         this.cursorLoader = new CursorLoader(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, GALLERY_PROJECTION, null, null,
@@ -48,7 +54,11 @@ public class GalleryUseCase {
     }
 
     public static GalleryUseCase createdUseCase(Context context) {
-        return new GalleryUseCase(context);
+        return createdUseCase(context, null);
+    }
+
+    public static GalleryUseCase createdUseCase(Context context, String name) {
+        return new GalleryUseCase(context, name);
     }
 
     public Observable<List<FolderEntity>> retrieveGallery() {
@@ -73,7 +83,7 @@ public class GalleryUseCase {
                     Observable.error(new NullPointerException("cursor must not be null"));
                 } else {
                     try {
-                        while (cursor.moveToNext()) {
+                        while (cursor.moveToNext() && !subscriber.isUnsubscribed()) {
 
                             /**exclude .gif*/
                             if (cursor.getString(cursor.getColumnIndexOrThrow(GALLERY_PROJECTION[0]))
@@ -131,8 +141,6 @@ public class GalleryUseCase {
                                  clone.setSize(size);
                                  clone.setModifyDate(modifyDate);
 
-                                 System.out.println("Name:  "+imageName+"   Path: "+imagePath);
-
                                  return clone;
                              }
                          })
@@ -172,7 +180,7 @@ public class GalleryUseCase {
                              public FolderEntity call(List<ImageEntity> imageEntities) {
 
                                  FolderEntity clone = folderEntity.newInstance();
-                                 clone.setFolderName("所有图片");
+                                 clone.setFolderName((name != null && !name.isEmpty()) ? name : "全部图片");
                                  clone.setFolderPath("");
                                  clone.setChecked(true);
                                  clone.setThumbPath(imageEntities.get(0)

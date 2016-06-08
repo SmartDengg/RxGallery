@@ -4,14 +4,14 @@ apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.SmartDengg'
 
 android {
-  compileSdkVersion 23
-  buildToolsVersion "23.0.2"
+  compileSdkVersion rootProject.ext.android.compileSdkVersion
+  buildToolsVersion rootProject.ext.android.buildToolsVersion
 
   defaultConfig {
-    minSdkVersion 14
-    targetSdkVersion 23
-    versionCode 1
-    versionName "1.0"
+    minSdkVersion rootProject.ext.android.minSdkVersion
+    targetSdkVersion rootProject.ext.android.targetSdkVersion
+    versionCode rootProject.ext.android.versionCode
+    versionName rootProject.ext.android.versionName
   }
   buildTypes {
     release {
@@ -24,5 +24,5 @@ android {
 dependencies {
   compile fileTree(dir: 'libs', include: ['*.jar'])
   /*ReactiveX Library*/
-  compile 'io.reactivex:rxjava:1.1.1'
+  compile rootProject.ext.dependencies.libRxJava
 }
