@@ -1,4 +1,4 @@
-<manifest package="com.lianjiatech.infrastructure.smartgallery"
+<manifest package="com.smartdengg.rxgallery"
   xmlns:android="http://schemas.android.com/apk/res/android">
 
   <application

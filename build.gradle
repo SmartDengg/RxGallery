@@ -27,4 +27,4 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-apply from: rootProject.file('lianjia.gradle')
+apply from: rootProject.file('config.gradle')

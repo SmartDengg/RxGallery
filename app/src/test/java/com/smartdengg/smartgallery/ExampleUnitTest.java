@@ -1,4 +1,4 @@
-package com.smartdengg.smartgallery;
+package com.smartdengg.rxgallery;
 
 import org.junit.Test;
 

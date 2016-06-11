@@ -1,93 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
 
   <!--Top-->
   <RelativeLayout
-    android:id="@+id/gallery_layout_title_rl"
-    android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
-    android:background="@color/homeLinkGreen">
+      android:id="@+id/gallery_layout_title_rl"
+      android:layout_width="match_parent"
+      android:layout_height="?attr/actionBarSize"
+      android:background="@color/homeLinkGreen">
 
     <ImageView
-      android:id="@+id/gallery_layout_back_iv"
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent"
-      android:layout_centerVertical="true"
-      android:paddingLeft="@dimen/material_8dp"
-      android:paddingRight="@dimen/material_8dp"
-      android:scaleType="centerInside"
-      android:src="@drawable/ic_back"
-      android:tint="@android:color/white" />
+        android:id="@+id/gallery_layout_back_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:paddingLeft="@dimen/material_8dp"
+        android:paddingRight="@dimen/material_8dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_back"
+        android:tint="@android:color/white" />
 
     <TextView
-      android:id="@+id/gallery_layout_count_tv"
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent"
-      android:layout_alignParentRight="true"
-      android:layout_marginRight="@dimen/material_24dp"
-      android:gravity="center"
-      android:text="0/9"
-      android:textColor="@android:color/white"
-      android:textSize="@dimen/material_18sp" />
+        android:id="@+id/gallery_layout_count_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/material_24dp"
+        android:gravity="center"
+        android:text="0/9"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/material_18sp" />
   </RelativeLayout>
 
   <!--Content-->
   <android.support.v7.widget.RecyclerView
-    android:id="@+id/gallery_layout_rv"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_below="@id/gallery_layout_title_rl"
-    android:layout_marginTop="?attr/actionBarSize"
-    android:background="@android:color/white"
-    android:clipToPadding="false" />
+      android:id="@+id/gallery_layout_rv"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_below="@id/gallery_layout_title_rl"
+      android:layout_marginTop="?attr/actionBarSize"
+      android:background="@android:color/white"
+      android:clipToPadding="false" />
 
   <!--Bottom-->
   <RelativeLayout
-    android:id="@+id/gallery_layout_bottom_rl"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/material_48dp"
-    android:layout_gravity="bottom"
-    android:background="@color/homeLinkGreen"
-    app:layout_behavior="@string/auto_hide_bottom_behavior">
+      android:id="@+id/gallery_layout_bottom_rl"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/material_48dp"
+      android:layout_gravity="bottom"
+      android:background="@color/homeLinkGreen"
+      app:layout_behavior="@string/auto_hide_bottom_behavior">
 
     <Button
-      android:id="@+id/gallery_layout_category_btn"
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent"
-      android:layout_alignParentLeft="true"
-      android:background="@drawable/abc_list_selector_holo_dark"
-      android:gravity="center"
-      android:paddingLeft="@dimen/material_8dp"
-      android:paddingRight="@dimen/material_8dp"
-      android:text="全部图片"
-      android:textColor="@android:color/white"
-      android:textSize="@dimen/material_18sp" />
+        android:id="@+id/gallery_layout_preview_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/abc_list_selector_holo_dark"
+        android:gravity="center"
+        android:paddingLeft="@dimen/material_8dp"
+        android:paddingRight="@dimen/material_8dp"
+        android:text="预览"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/material_18sp" />
 
     <Button
-      android:id="@+id/gallery_layout_preview_btn"
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent"
-      android:layout_alignParentRight="true"
-      android:background="@drawable/abc_list_selector_holo_dark"
-      android:gravity="center"
-      android:paddingLeft="@dimen/material_8dp"
-      android:paddingRight="@dimen/material_8dp"
-      android:text="预览"
-      android:textColor="@android:color/white"
-      android:textSize="@dimen/material_18sp" />
+        android:id="@+id/gallery_layout_category_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@id/gallery_layout_preview_btn"
+        android:background="@drawable/abc_list_selector_holo_dark"
+        android:gravity="start|center"
+        android:paddingLeft="@dimen/material_8dp"
+        android:paddingRight="@dimen/material_8dp"
+        android:text="全部图片"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/material_18sp"
+        tools:text="全部图片"
+        />
+
+
   </RelativeLayout>
 
   <ImageView
-    android:id="@+id/gallery_layout_hero_iv"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/transparent"
-    android:scaleType="centerCrop"
-    android:visibility="gone" />
+      android:id="@+id/gallery_layout_hero_iv"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@android:color/transparent"
+      android:scaleType="centerCrop"
+      android:visibility="gone" />
 
 
 </android.support.design.widget.CoordinatorLayout>

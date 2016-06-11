@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SmartGallery</string>
-    <string name="auto_hide_bottom_behavior">com.smartdengg.smartgallery.view.BottomAutoBehavior</string>
-    <string name="homelink">By : HomeLink</string>
+    <string name="app_name">RxGallery</string>
+    <string name="auto_hide_bottom_behavior">com.smartdengg.rxgallery.example.view.BottomAutoBehavior</string>
+    <string name="homelink">By : SmartDengg</string>
 </resources>
