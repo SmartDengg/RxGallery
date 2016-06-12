@@ -10,7 +10,13 @@ import com.smartdengg.rxgallery.entity.ImageEntity;
 import com.smartdengg.rxgallery.onsubscribe.InternalOnSubscribe;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -31,6 +37,19 @@ public class GalleryUseCase {
 
     private FolderEntity folderEntity = new FolderEntity();
     private ImageEntity imageEntity = new ImageEntity();
+    private List<ImageEntity> allPictures = new ArrayList<>();
+
+    private Map<String, FolderEntity> folderListMap = new TreeMap<>();
+
+    private SortedSet<Map.Entry<String, FolderEntity>> sortedSet = new TreeSet<>(new Comparator<Map.Entry<String, FolderEntity>>() {
+        @Override
+        public int compare(Map.Entry<String, FolderEntity> e1, Map.Entry<String, FolderEntity> e2) {
+
+            return e1.getValue()
+                     .getImageCount() - e2.getValue()
+                                          .getImageCount();
+        }
+    });
 
     static {
 
@@ -65,78 +84,20 @@ public class GalleryUseCase {
     }
 
     public Observable<List<FolderEntity>> retrieveInternalGallery() {
-        return this.hunter(this.getInternalObservable());
+        return this.hunterList(this.getInternalObservable());
     }
 
     public Observable<List<FolderEntity>> retrieveEnternalGallery() {
-        return this.hunter(this.getExternalObservable());
+        return this.hunterList(this.getExternalObservable());
     }
 
     public Observable<List<FolderEntity>> retrieveAllGallery() {
-        return this.hunter(Observable.merge(this.getInternalObservable(), this.getExternalObservable()));
+        return this.hunterList(Observable.merge(this.getInternalObservable(), this.getExternalObservable()));
     }
 
-    private Observable<List<FolderEntity>> hunter(Observable<Cursor> cursorObservable) {
+    private Observable<List<FolderEntity>> hunterList(Observable<Cursor> cursorObservable) {
 
-        cursorObservable.takeUntil(new Func1<Cursor, Boolean>() {
-            @Override
-            public Boolean call(Cursor cursor) {
-                return cursor.isClosed();
-            }
-        })
-                        .onBackpressureBuffer()
-                        .map(new Func1<Cursor, ImageEntity>() {
-                            @Override
-                            public ImageEntity call(Cursor cursor) {
-                                return GalleryUseCase.this.convertToImageEntity(cursor);
-                            }
-                        })
-                        .filter(new Func1<ImageEntity, Boolean>() {
-                            @Override
-                            public Boolean call(ImageEntity imageEntity) {
-
-                                /*校验文件是否存在*/
-                                File file = new File(imageEntity.getImagePath());
-                                File parentFile = file.getParentFile();
-
-                                return file.exists() && parentFile != null;
-                            }
-                        })
-                        .groupBy(new Func1<ImageEntity, String>() {
-                            @Override
-                            public String call(ImageEntity imageEntity) {
-                                File parentFile = new File(imageEntity.getImagePath()).getParentFile();
-                                return parentFile.getAbsolutePath();
-                            }
-                        })
-                        .map(new Func1<GroupedObservable<String, ImageEntity>, Observable<ImageEntity>>() {
-                            @Override
-                            public Observable<ImageEntity> call(GroupedObservable<String, ImageEntity> groupedObservable) {
-
-                                String key = groupedObservable.getKey();
-                                System.out.println(key);
-
-                                return groupedObservable.flatMap(new Func1<ImageEntity, Observable<ImageEntity>>() {
-                                    @Override
-                                    public Observable<ImageEntity> call(ImageEntity imageEntity) {
-
-                                        System.out.println(imageEntity.getImageName());
-                                        return Observable.just(imageEntity);
-                                    }
-                                });
-                            }
-                        })
-                        .subscribe(new Action1<Observable<ImageEntity>>() {
-                            @Override
-                            public void call(Observable<ImageEntity> imageEntityObservable) {
-
-                            }
-                        }, new Action1<Throwable>() {
-                            @Override
-                            public void call(Throwable throwable) {
-                                throwable.printStackTrace();
-                            }
-                        });
+        hunterMap(cursorObservable);
 
         return cursorObservable.takeUntil(new Func1<Cursor, Boolean>() {
             @Override
@@ -212,13 +173,115 @@ public class GalleryUseCase {
 
     }
 
+    @SuppressWarnings("all")
+    private Observable<Map<String, FolderEntity>> hunterMap(Observable<Cursor> cursorObservable) {
+
+        cursorObservable.takeUntil(new Func1<Cursor, Boolean>() {
+            @Override
+            public Boolean call(Cursor cursor) {
+                return cursor.isClosed();
+            }
+        })
+                        .onBackpressureBuffer()
+                        .map(new Func1<Cursor, ImageEntity>() {
+                            @Override
+                            public ImageEntity call(Cursor cursor) {
+                                return GalleryUseCase.this.convertToImageEntity(cursor);
+                            }
+                        })
+                        .filter(new Func1<ImageEntity, Boolean>() {
+                            @Override
+                            public Boolean call(ImageEntity imageEntity) {
+
+                                /*校验文件是否存在*/
+                                File file = new File(imageEntity.getImagePath());
+                                File parentFile = file.getParentFile();
+
+                                return file.exists() && parentFile != null;
+                            }
+                        })
+                        .groupBy(new Func1<ImageEntity, String>() {
+                            @Override
+                            public String call(ImageEntity imageEntity) {
+                                File parentFile = new File(imageEntity.getImagePath()).getParentFile();
+                                return parentFile.getAbsolutePath();
+                            }
+                        })
+                        .concatMap(new Func1<GroupedObservable<String, ImageEntity>, Observable<Map<String, FolderEntity>>>() {
+                            @Override
+                            public Observable<Map<String, FolderEntity>> call(final GroupedObservable<String, ImageEntity> groupedObservable) {
+
+                                return groupedObservable.map(new Func1<ImageEntity, Map<String, FolderEntity>>() {
+                                    @Override
+                                    public Map<String, FolderEntity> call(ImageEntity imageEntity) {
+
+                                        /*全部图片集合*/
+                                        GalleryUseCase.this.allPictures.add(imageEntity);
+
+                                        String key = groupedObservable.getKey();
+                                        File folderFile = new File(imageEntity.getImagePath()).getParentFile();
+
+                                        if (!folderListMap.containsKey(key)) {
+
+                                            FolderEntity folderEntity = GalleryUseCase.this.folderEntity.newInstance();
+                                            folderEntity.setFolderName(folderFile.getName());
+                                            folderEntity.setFolderPath(folderFile.getAbsolutePath());
+                                            folderEntity.setThumbPath(imageEntity.getImagePath());
+                                            folderEntity.addImage(imageEntity);
+
+                                            folderListMap.put(key, folderEntity);
+                                        } else {
+                                            folderListMap.get(key)
+                                                         .addImage(imageEntity);
+                                        }
+
+                                        return folderListMap;
+                                    }
+                                });
+                            }
+                        })
+                        .last()
+                        .map(new Func1<Map<String, FolderEntity>, Map<String, FolderEntity>>() {
+                            @Override
+                            public Map<String, FolderEntity> call(Map<String, FolderEntity> folderEntityMap) {
+
+                                FolderEntity allFolderEntity = GalleryUseCase.this.folderEntity.newInstance();
+                                allFolderEntity.setFolderName((name != null && !name.isEmpty()) ? name : "全部图片");
+                                allFolderEntity.setFolderPath("");
+                                allFolderEntity.setThumbPath(allPictures.get(0)
+                                                                        .getImagePath());
+                                allFolderEntity.setImageEntities(allPictures);
+
+                                folderEntityMap.put((name != null && !name.isEmpty()) ? name : "全部图片", allFolderEntity);
+
+                                sortedSet.addAll(folderEntityMap.entrySet());
+                                return Collections.unmodifiableMap((Map<? extends String, ? extends FolderEntity>) sortedSet);
+                            }
+                        })
+                        .subscribe(new Action1<Map<String, FolderEntity>>() {
+                            @Override
+                            public void call(Map<String, FolderEntity> folderEntityMap) {
+
+                                for (Map.Entry<String, FolderEntity> entry : folderEntityMap.entrySet()) {
+                                    System.out.println(entry.getKey() + " : " + entry.getValue());
+                                }
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                throwable.printStackTrace();
+                            }
+                        });
+
+        return null;
+    }
+
     private Observable<Cursor> getInternalObservable() {
         return Observable.create(new InternalOnSubscribe(this.internalLoader, GALLERY_PROJECTION));
     }
 
     private Observable<Cursor> getExternalObservable() {
         return Observable.create(new InternalOnSubscribe(this.externalLoader, GALLERY_PROJECTION));
-
     }
 
     private ImageEntity convertToImageEntity(Cursor cursor) {
@@ -251,4 +314,19 @@ public class GalleryUseCase {
         clone.setModifyDate(modifyDate);
         return clone;
     }
+
+
+    private <K, V extends Comparable<? super V>> SortedSet<Map.Entry<K, V>> entriesSortedByValues(Map<K, V> map) {
+        SortedSet<Map.Entry<K, V>> sortedEntries = new TreeSet<>(new Comparator<Map.Entry<K, V>>() {
+            @Override
+            public int compare(Map.Entry<K, V> e1, Map.Entry<K, V> e2) {
+                int res = e1.getValue()
+                            .compareTo(e2.getValue());
+                return res != 0 ? res : 1;
+            }
+        });
+        sortedEntries.addAll(map.entrySet());
+        return sortedEntries;
+    }
+
 }

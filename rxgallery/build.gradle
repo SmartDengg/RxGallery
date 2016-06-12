@@ -23,6 +23,9 @@ android {
 
 dependencies {
   compile fileTree(dir: 'libs', include: ['*.jar'])
+  /*Google Library*/
+  compile rootProject.ext.dependencies.libSupport_V4
+
   /*ReactiveX Library*/
   compile rootProject.ext.dependencies.libRxJava
 }
