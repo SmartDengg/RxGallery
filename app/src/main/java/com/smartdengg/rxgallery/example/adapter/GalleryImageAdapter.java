@@ -30,6 +30,7 @@ import rx.functions.Action1;
  */
 public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapter.ViewHolder> implements Observer<List<ImageEntity>> {
 
+    public static final String TAG = GalleryImageAdapter.class.getSimpleName();
     private Context context;
     private List<ImageEntity> items;
 
@@ -98,13 +99,13 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
                    .networkPolicy(NetworkPolicy.NO_CACHE)
                    .fit()
                    .centerCrop()
-                   .tag(context)
+                   .tag(TAG)
                    .into(holder.thumbIv);
         }
 
         if (entity.isChecked()) {
             holder.itemView.setBackgroundDrawable(selectedDrawable);
-        }else {
+        } else {
             holder.itemView.setBackgroundColor(normalColor);
         }
     }

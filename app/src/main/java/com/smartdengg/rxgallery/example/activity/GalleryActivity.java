@@ -117,9 +117,9 @@ public class GalleryActivity extends AppCompatActivity {
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             final Picasso picasso = Picasso.with(GalleryActivity.this);
             if (newState == RecyclerView.SCROLL_STATE_IDLE || newState == RecyclerView.SCROLL_STATE_SETTLING) {
-                picasso.resumeTag(GalleryActivity.this);
+                picasso.resumeTag(GalleryImageAdapter.TAG);
             } else {
-                picasso.pauseTag(GalleryActivity.this);
+                picasso.pauseTag(GalleryImageAdapter.TAG);
             }
         }
     };
@@ -418,6 +418,7 @@ public class GalleryActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         this.subscription.unsubscribe();
+        Picasso.with(GalleryActivity.this).cancelTag(GalleryImageAdapter.TAG);
         ButterKnife.unbind(GalleryActivity.this);
     }
 }
