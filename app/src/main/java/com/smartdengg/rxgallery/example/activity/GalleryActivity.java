@@ -29,7 +29,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.orhanobut.logger.Logger;
-import com.smartdengg.rxgallery.GalleryUseCase;
 import com.smartdengg.rxgallery.entity.FolderEntity;
 import com.smartdengg.rxgallery.entity.ImageEntity;
 import com.smartdengg.rxgallery.example.R;
@@ -39,10 +38,12 @@ import com.smartdengg.rxgallery.example.entity.WrapperFolderEntity;
 import com.smartdengg.rxgallery.example.utils.BestBlur;
 import com.smartdengg.rxgallery.example.view.BottomSheetDialog;
 import com.smartdengg.rxgallery.example.view.MarginDecoration;
+import com.smartdengg.rxgallery.usecase.GalleryMapUseCase;
 import com.squareup.picasso.Picasso;
 import hugo.weaving.DebugLog;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import rx.Observable;
 import rx.RxDebounceClick;
 import rx.Subscriber;
@@ -89,7 +90,7 @@ public class GalleryActivity extends AppCompatActivity {
 
     /*SheetDialog 相关*/
     private BottomSheetDialog sheetDialog;
-    private List<WrapperFolderEntity> galleryFolderEntities = new ArrayList<>();
+    private List<WrapperFolderEntity> folderEntities = new ArrayList<>();
     private GalleryFolderAdapter galleryFolderAdapter;
     private WrapperFolderEntity currentFolderEntity;
 
@@ -247,54 +248,56 @@ public class GalleryActivity extends AppCompatActivity {
 
     @DebugLog
     private void loadGallery() {
-        subscription = GalleryUseCase.createdUseCase(GalleryActivity.this)
-                                     .retrieveAllGallery()
-                                     .takeFirst(new Func1<List<FolderEntity>, Boolean>() {
-                                         @Override
-                                         public Boolean call(List<FolderEntity> folderEntities) {
-                                             return !subscription.isUnsubscribed();
-                                         }
-                                     })
-                                     .observeOn(AndroidSchedulers.mainThread())
-                                     .subscribe(new Subscriber<List<FolderEntity>>() {
-                                         @Override
-                                         public void onCompleted() {
-                                             ViewCompat.animate(bottomRl)
-                                                       .translationY(0.0f)
-                                                       .setStartDelay(getResources().getInteger(android.R.integer.config_longAnimTime))
-                                                       .withLayer();
-                                         }
 
-                                         @Override
-                                         public void onError(Throwable e) {
-                                             Logger.t(0)
-                                                   .e(e.toString());
-                                         }
+        subscription = GalleryMapUseCase.createdUseCase(GalleryActivity.this)
+                                        .retrieveAllGallery()
+                                        .takeFirst(new Func1<Map<String, FolderEntity>, Boolean>() {
+                                            @Override
+                                            public Boolean call(Map<String, FolderEntity> stringFolderEntityMap) {
+                                                return !subscription.isUnsubscribed();
+                                            }
+                                        })
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(new Subscriber<Map<String, FolderEntity>>() {
+                                            @Override
+                                            public void onCompleted() {
+                                                ViewCompat.animate(bottomRl)
+                                                          .translationY(0.0f)
+                                                          .setStartDelay(getResources().getInteger(android.R.integer.config_longAnimTime))
+                                                          .withLayer();
+                                            }
 
-                                         @Override
-                                         public void onNext(List<FolderEntity> galleryFolderEntities) {
+                                            @Override
+                                            public void onError(Throwable e) {
+                                                Logger.t(0)
+                                                      .e(e.toString());
+                                            }
 
-                                             //@formatter:off
-                                             for (int i = 0; i < galleryFolderEntities.size(); i++) {
+                                            @Override
+                                            public void onNext(Map<String, FolderEntity> folderEntityMap) {
 
-                                                 WrapperFolderEntity wrapperFolderEntity = new WrapperFolderEntity();
-                                                 wrapperFolderEntity.setFolderName(galleryFolderEntities.get(i).getFolderName());
-                                                 wrapperFolderEntity.setFolderPath(galleryFolderEntities.get(i).getFolderPath());
-                                                 wrapperFolderEntity.setThumbPath(galleryFolderEntities.get(i).getThumbPath());
-                                                 wrapperFolderEntity.setImageEntities(galleryFolderEntities.get(i).getImageEntities());
+                                                //@formatter:off
+                                                for (Map.Entry<String, FolderEntity> entry : folderEntityMap.entrySet()) {
 
-                                                 if (i == 0) {
-                                                     wrapperFolderEntity.setChecked(true);
-                                                     GalleryActivity.this.currentFolderEntity = wrapperFolderEntity;
-                                                 }
-                                                 GalleryActivity.this.galleryFolderEntities.add(wrapperFolderEntity);
-                                             }
+                                                    WrapperFolderEntity wrapperFolderEntity = new WrapperFolderEntity();
+                                                    wrapperFolderEntity.setFolderName(entry.getValue().getFolderName());
+                                                    wrapperFolderEntity.setFolderPath(entry.getValue().getFolderPath());
+                                                    wrapperFolderEntity.setThumbPath(entry.getValue().getThumbPath());
+                                                    wrapperFolderEntity.setImageEntities(entry.getValue().getImageEntities());
 
-                                             /*填充数据*/
-                                             Observable.just(currentFolderEntity.getImageEntities())
-                                                       .subscribe(GalleryActivity.this.galleryImageAdapter);
-                                         }
-                                     });
+                                                    GalleryActivity.this.folderEntities.add(wrapperFolderEntity);
+                                                }
+
+                                                //@formatter:on
+                                                GalleryActivity.this.currentFolderEntity = GalleryActivity.this.folderEntities.get(0);
+                                                currentFolderEntity.setChecked(true);
+
+                                                /*填充数据*/
+                                                Observable.just(currentFolderEntity.getImageEntities())
+                                                          .subscribe(GalleryActivity.this.galleryImageAdapter);
+
+                                            }
+                                        });
     }
 
     @NonNull
@@ -337,7 +340,7 @@ public class GalleryActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(new MarginDecoration(GalleryActivity.this));
         recyclerView.setAdapter(galleryFolderAdapter);
         /*填充文件夹数据*/
-        Observable.just(galleryFolderEntities)
+        Observable.just(folderEntities)
                   .subscribe(galleryFolderAdapter);
 
         sheetDialog = new BottomSheetDialog(GalleryActivity.this);

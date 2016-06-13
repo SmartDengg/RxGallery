@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by SmartDengg on 2016/3/5.
  */
-public class FolderEntity implements Cloneable {
+public class FolderEntity implements Cloneable, Comparable<FolderEntity> {
 
     private String folderName = "";
     private String folderPath = "";
@@ -85,5 +85,15 @@ public class FolderEntity implements Cloneable {
                 '}';
     }
 
+    @SuppressWarnings("all")
+    @Override
+    public int compareTo(FolderEntity another) {
+        if (another == null) throw new NullPointerException("another == null");
 
+        if (this.getImageEntities().size() - another.getImageEntities().size() >= 0) {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
 }
