@@ -5,6 +5,8 @@ import com.smartdengg.rxgallery.entity.FolderEntity;
 import com.smartdengg.rxgallery.entity.ImageEntity;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import rx.Observable;
 import rx.functions.Action1;
@@ -30,28 +32,29 @@ public class GalleryListUseCase extends GalleryUseCase<List<FolderEntity>> {
         return new GalleryListUseCase(context, name);
     }
 
-    //@formatter:off
+    //@formatter:on
     @Override
     protected Observable<List<FolderEntity>> hunter(Observable<ImageEntity> cursorObservable) {
 
         return cursorObservable.doOnNext(new Action1<ImageEntity>() {
-                                   @Override
-                                   public void call(ImageEntity imageEntity) {
+            @Override
+            public void call(ImageEntity imageEntity) {
 
-                                       File folderFile = new File(imageEntity.getImagePath()).getParentFile();
-                                       FolderEntity clone = folderEntity.newInstance();
-                                       clone.setFolderName(folderFile.getName());
-                                       clone.setFolderPath(folderFile.getAbsolutePath());
+                File folderFile = new File(imageEntity.getImagePath()).getParentFile();
+                FolderEntity clone = folderEntity.newInstance();
+                clone.setFolderName(folderFile.getName());
+                clone.setFolderPath(folderFile.getAbsolutePath());
 
-                                       if (!items.contains(clone)) {
-                                           clone.setThumbPath(imageEntity.getImagePath());
-                                           clone.addImage(imageEntity);
-                                           items.add(clone);
-                                       } else {
-                                           items.get(items.indexOf(clone)).addImage(imageEntity);
-                                       }
-                                   }
-                               })
+                if (!items.contains(clone)) {
+                    clone.setThumbPath(imageEntity.getImagePath());
+                    clone.addImage(imageEntity);
+                    items.add(clone);
+                } else {
+                    items.get(items.indexOf(clone))
+                         .addImage(imageEntity);
+                }
+            }
+        })
                                .toList()
                                .map(new Func1<List<ImageEntity>, FolderEntity>() {
                                    @Override
@@ -60,7 +63,8 @@ public class GalleryListUseCase extends GalleryUseCase<List<FolderEntity>> {
                                        FolderEntity clone = folderEntity.newInstance();
                                        clone.setFolderName((name != null && !name.isEmpty()) ? name : "全部图片");
                                        clone.setFolderPath("");
-                                       clone.setThumbPath(imageEntities.get(0).getImagePath());
+                                       clone.setThumbPath(imageEntities.get(0)
+                                                                       .getImagePath());
                                        clone.setImageEntities(imageEntities);
 
                                        return clone;
@@ -70,15 +74,30 @@ public class GalleryListUseCase extends GalleryUseCase<List<FolderEntity>> {
                                    @Override
                                    public List<FolderEntity> call(FolderEntity folderEntity) {
 
-                                       List<FolderEntity> galleryFolderEntities = new ArrayList<>(items.size() + 1);
+                                       List<FolderEntity> folderEntityList = new ArrayList<>(items.size() + 1);
 
-                                       galleryFolderEntities.add(folderEntity);
-                                       galleryFolderEntities.addAll(items);
+                                       folderEntityList.add(folderEntity);
+                                       folderEntityList.addAll(items);
 
-                                       return galleryFolderEntities;
+                                       Collections.sort(folderEntityList, new ValueComparator());
+
+                                       return folderEntityList;
                                    }
                                })
                                .subscribeOn(Schedulers.io());
-
     }
+
+    private static final class ValueComparator implements Comparator<FolderEntity> {
+
+        @Override
+        public int compare(FolderEntity lhs, FolderEntity rhs) {
+
+            if (lhs.getImageCount() - rhs.getImageCount() >= 0) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+    }
+
 }

@@ -137,7 +137,7 @@ abstract class GalleryUseCase<T> {
         @Override
         public Boolean call(ImageEntity imageEntity) {
 
-                                       /*校验文件是否存在*/
+            /*校验文件是否存在*/
             File file = new File(imageEntity.getImagePath());
             File parentFile = file.getParentFile();
 

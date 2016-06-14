@@ -71,8 +71,7 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
 
                                                    folderListMap.put(key, folderEntity);
                                                } else {
-                                                   folderListMap.get(key)
-                                                                .addImage(imageEntity);
+                                                   folderListMap.get(key).addImage(imageEntity);
                                                }
 
                                                return folderListMap;
@@ -98,6 +97,9 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
                                        for (Map.Entry<String, FolderEntity> entry : folderListMap.entrySet()) {
                                            folderEntityMap.put(entry.getKey(), entry.getValue());
                                        }
+
+                                       /*clear folder map*/
+                                       GalleryMapUseCase.this.folderListMap.clear();
 
                                        return Collections.unmodifiableMap(folderEntityMap);
                                    }

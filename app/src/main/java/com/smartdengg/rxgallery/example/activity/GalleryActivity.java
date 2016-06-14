@@ -38,6 +38,7 @@ import com.smartdengg.rxgallery.example.entity.WrapperFolderEntity;
 import com.smartdengg.rxgallery.example.utils.BestBlur;
 import com.smartdengg.rxgallery.example.view.BottomSheetDialog;
 import com.smartdengg.rxgallery.example.view.MarginDecoration;
+import com.smartdengg.rxgallery.usecase.GalleryListUseCase;
 import com.smartdengg.rxgallery.usecase.GalleryMapUseCase;
 import com.squareup.picasso.Picasso;
 import hugo.weaving.DebugLog;
