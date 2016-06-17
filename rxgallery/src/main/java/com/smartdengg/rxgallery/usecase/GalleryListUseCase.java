@@ -92,11 +92,11 @@ public class GalleryListUseCase extends GalleryUseCase<List<FolderEntity>> {
         @Override
         public int compare(FolderEntity lhs, FolderEntity rhs) {
 
-            if (lhs.getImageCount() - rhs.getImageCount() >= 0) {
-                return -1;
-            } else {
-                return 1;
-            }
+            int lhsCount = lhs.getImageCount();
+            int rhsCount = rhs.getImageCount();
+
+            return (lhsCount == rhsCount) ? lhs.getFolderName()
+                                               .compareTo(rhs.getFolderName()) : rhsCount - lhsCount;
         }
     }
 

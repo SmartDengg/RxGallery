@@ -14,6 +14,7 @@ import butterknife.ButterKnife;
 import com.orhanobut.logger.Logger;
 import com.smartdengg.rxgallery.example.R;
 import com.smartdengg.rxgallery.example.entity.WrapperFolderEntity;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.List;
@@ -24,7 +25,8 @@ import rx.functions.Action1;
 /**
  * Created by SmartDengg on 2016/3/5.
  */
-public class GalleryFolderAdapter extends RecyclerView.Adapter<GalleryFolderAdapter.ViewHolder> implements Observer<List<WrapperFolderEntity>> {
+public class GalleryFolderAdapter extends RecyclerView.Adapter<GalleryFolderAdapter.ViewHolder>
+        implements Observer<List<WrapperFolderEntity>> {
 
     private Context context;
     private List<WrapperFolderEntity> items;
@@ -67,6 +69,7 @@ public class GalleryFolderAdapter extends RecyclerView.Adapter<GalleryFolderAdap
                    .load(new File(thumbUrl))
                    .placeholder(R.drawable.holder)
                    .error(R.drawable.holder)
+                   .networkPolicy(NetworkPolicy.OFFLINE)
                    .fit()
                    .centerCrop()
                    .noFade()

@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class FolderEntity implements Cloneable, Comparable<FolderEntity> {
 
+
     private String folderName = "";
     private String folderPath = "";
     private String thumbPath = "";
@@ -90,7 +91,9 @@ public class FolderEntity implements Cloneable, Comparable<FolderEntity> {
     public int compareTo(FolderEntity another) {
         if (another == null) throw new NullPointerException("another == null");
 
-        if (this.getImageEntities().size() - another.getImageEntities().size() >= 0) {
+        if (this.getImageEntities()
+                .size() - another.getImageEntities()
+                                 .size() >= 0) {
             return 1;
         } else {
             return -1;

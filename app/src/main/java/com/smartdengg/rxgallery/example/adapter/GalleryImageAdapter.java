@@ -42,6 +42,8 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
 
     private Callback callback;
 
+    private int i = 0;
+
     public GalleryImageAdapter(Context context) {
         this.context = context;
         this.normalColor = context.getResources()
@@ -52,8 +54,10 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(context)
-                                            .inflate(R.layout.gallery_image_item, parent, false));
+        View inflate = LayoutInflater.from(context)
+                                     .inflate(R.layout.gallery_image_item, parent, false);
+
+        return new ViewHolder(inflate);
     }
 
     @Override
@@ -96,7 +100,7 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
             picasso.load(new File(thumbUrl))
                    .placeholder(R.drawable.holder)
                    .error(R.drawable.holder)
-                   .networkPolicy(NetworkPolicy.NO_CACHE)
+                   .networkPolicy(NetworkPolicy.OFFLINE)
                    .fit()
                    .centerCrop()
                    .tag(TAG)
@@ -172,6 +176,8 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
 
         public ViewHolder(View itemView) {
             super(itemView);
+            itemView.setLayoutParams(new ViewGroup.LayoutParams(300, 300));
+
             ButterKnife.bind(ViewHolder.this, itemView);
         }
     }

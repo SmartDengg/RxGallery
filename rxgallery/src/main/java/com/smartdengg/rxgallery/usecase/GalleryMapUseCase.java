@@ -107,6 +107,7 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
                                .subscribeOn(Schedulers.io());
     }
 
+    //@formatter:on
     private static final class ValueComparator implements Comparator<String> {
 
         Map<String, FolderEntity> base;
@@ -121,11 +122,11 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
             FolderEntity lhsEntity = base.get(lhs);
             FolderEntity rhsEntity = base.get(rhs);
 
-            if (lhsEntity.getImageCount() - rhsEntity.getImageCount() >= 0) {
-                return -1;
-            } else {
-                return 1;
-            }
+            int lhsCount = lhsEntity.getImageCount();
+            int rhsCount = rhsEntity.getImageCount();
+
+            return (lhsCount == rhsCount) ? rhsEntity.getFolderName()
+                                                     .compareTo(lhsEntity.getFolderName()) : rhsCount - lhsCount;
         }
     }
 }
