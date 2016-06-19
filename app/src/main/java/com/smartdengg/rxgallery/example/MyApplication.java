@@ -3,9 +3,12 @@ package com.smartdengg.rxgallery.example;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import com.jakewharton.picasso.OkHttp3Downloader;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
+import com.squareup.picasso.DataUriRequestHandler;
 import com.squareup.picasso.Picasso;
+import okhttp3.OkHttpClient;
 
 /**
  * *   ┏┓　　　┏┓
@@ -40,8 +43,10 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        Picasso picasso = new Picasso.Builder(MyApplication.this).listener(picassoListener)
+        Picasso picasso = new Picasso.Builder(MyApplication.this).downloader(new OkHttp3Downloader(new OkHttpClient()))
+                                                                 .listener(picassoListener)
                                                                  .defaultBitmapConfig(Bitmap.Config.ARGB_8888)
+                                                                 .addRequestHandler(new DataUriRequestHandler())
                                                                  .build();
 
         Picasso.setSingletonInstance(picasso);
