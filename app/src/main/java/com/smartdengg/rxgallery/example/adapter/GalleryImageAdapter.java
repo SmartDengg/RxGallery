@@ -42,8 +42,6 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
 
     private Callback callback;
 
-    private int i = 0;
-
     public GalleryImageAdapter(Context context) {
         this.context = context;
         this.normalColor = context.getResources()
@@ -54,10 +52,8 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View inflate = LayoutInflater.from(context)
-                                     .inflate(R.layout.gallery_image_item, parent, false);
-
-        return new ViewHolder(inflate);
+        return new ViewHolder(LayoutInflater.from(context)
+                                            .inflate(R.layout.gallery_image_item, parent, false));
     }
 
     @Override
@@ -176,8 +172,6 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
 
         public ViewHolder(View itemView) {
             super(itemView);
-            itemView.setLayoutParams(new ViewGroup.LayoutParams(300, 300));
-
             ButterKnife.bind(ViewHolder.this, itemView);
         }
     }

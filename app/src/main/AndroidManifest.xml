@@ -3,7 +3,7 @@
     package="com.smartdengg.rxgallery.example">
 
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
   <application
       android:name=".MyApplication"
@@ -13,7 +13,7 @@
       android:supportsRtl="true"
       android:largeHeap="true"
       android:theme="@style/AppTheme">
-    <activity android:name=".activity.MainActivity">
+    <activity android:name=".activity.MainActivity2">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
@@ -27,8 +27,6 @@
     <activity android:name=".activity.PreviewActivity" android:screenOrientation="portrait"
     android:theme="@style/AppTheme.Transparent"
     />
-
-
 
   </application>
 

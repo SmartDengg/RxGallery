@@ -35,7 +35,6 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
     }
 
     //@formatter:off
-    @SuppressWarnings("all")
     @Override
     protected Observable<Map<String, FolderEntity>> hunter(Observable<ImageEntity> cursorObservable) {
 

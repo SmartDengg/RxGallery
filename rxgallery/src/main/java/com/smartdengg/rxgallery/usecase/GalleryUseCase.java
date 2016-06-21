@@ -1,10 +1,12 @@
 package com.smartdengg.rxgallery.usecase;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.database.Cursor;
 import android.os.Build;
 import android.provider.MediaStore;
+import com.smartdengg.rxgallery.Utils;
 import com.smartdengg.rxgallery.entity.FolderEntity;
 import com.smartdengg.rxgallery.entity.ImageEntity;
 import com.smartdengg.rxgallery.onsubscribe.InternalOnSubscribe;
@@ -30,6 +32,8 @@ abstract class GalleryUseCase<T> {
     ImageEntity imageEntity = new ImageEntity();
     Map<String, FolderEntity> folderListMap = new HashMap<>();
 
+    private Context context;
+
     static {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             GalleryUseCase.GALLERY_PROJECTION = new String[] {
@@ -48,6 +52,7 @@ abstract class GalleryUseCase<T> {
     }
 
     /*package*/GalleryUseCase(Context context, String name) {
+        this.context = context;
         this.name = name;
         this.externalLoader = new CursorLoader(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, GALLERY_PROJECTION, null, null,
                 GALLERY_PROJECTION[2] + " DESC");
@@ -60,10 +65,20 @@ abstract class GalleryUseCase<T> {
     }
 
     public Observable<T> retrieveExternalGallery() {
+
+        if (!Utils.hasPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            throw new RuntimeException("missing permission: 'android.permission.READ_EXTERNAL_STORAGE' in your Manifest.xml");
+        }
+
         return this.hunter(this.transferObservable(this.getExternalObservable()));
     }
 
     public Observable<T> retrieveAllGallery() {
+
+        if (!Utils.hasPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            throw new RuntimeException("miss 'android.permission.READ_EXTERNAL_STORAGE' in your Manifest.xml");
+        }
+
         return this.hunter(this.transferObservable(Observable.merge(this.getInternalObservable(), this.getExternalObservable())));
     }
 
