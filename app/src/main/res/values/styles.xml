@@ -24,4 +24,17 @@
     <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
   </style>
 
+  <!-- see http://blog.csdn.net/luohaowang320/article/details/42124225 -->
+  <style name="ActivityAnimationStyle" parent="@android:style/Animation.Activity">
+    <!-- 新Activity 进入 -->
+    <item name="android:activityOpenEnterAnimation">@android:anim/fade_in</item>
+    <!-- 旧Activity退出 -->
+    <item name="android:activityOpenExitAnimation">@android:anim/fade_out</item>
+    <!-- 新Activity退出 -->
+    <item name="android:activityCloseExitAnimation">@android:anim/fade_out</item>
+    <!-- 旧Activity进入 -->
+    <item name="android:activityCloseEnterAnimation">@android:anim/fade_in</item>
+  </style>
+
+
 </resources>

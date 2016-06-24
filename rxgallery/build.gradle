@@ -1,9 +1,13 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group='com.github.SmartDengg'
+group = 'com.github.SmartDengg'
+
+def STRING = "String"
+def LIBRARY_VERSION = "LIBRARY_VERSION"
 
 android {
+
   compileSdkVersion rootProject.ext.android.compileSdkVersion
   buildToolsVersion rootProject.ext.android.buildToolsVersion
 
@@ -12,6 +16,8 @@ android {
     targetSdkVersion rootProject.ext.android.targetSdkVersion
     versionCode rootProject.ext.android.versionCode
     versionName rootProject.ext.android.versionName
+
+    buildConfigField STRING, LIBRARY_VERSION, "\"${rootProject.ext.VERSION_NAME}\""
   }
   buildTypes {
     release {

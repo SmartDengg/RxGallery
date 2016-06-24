@@ -20,11 +20,25 @@ import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.observers.Subscribers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.Subscriptions;
 
 public class MainActivity2 extends AppCompatActivity {
 
-    private AtomicInteger atomicInteger = new AtomicInteger(5);
+    private static AtomicInteger delayAtomic = new AtomicInteger(0);
     private Subscription subscription = Subscribers.empty();
+    private Subscription loopSubscription = Subscriptions.empty();
+
+    private static final Integer THRESHOLD = 4;
+    private static final int INITIAL_DELAY = 0;
+    private static final Integer PERIOD = 5;
+
+    private static final Observable.Transformer newTransformer = new Observable.Transformer() {
+        @Override
+        public Object call(Object observable) {
+            return ((Observable) observable).subscribeOn(Schedulers.newThread())
+                                            .observeOn(AndroidSchedulers.mainThread());
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +49,28 @@ public class MainActivity2 extends AppCompatActivity {
 
     @NonNull
     @OnClick(R.id.gallery_button)
-    protected void onGalleryClick() {
+    protected void onReduceClick() {
 
-        MainActivity2.this.reduce();
+        if (loopSubscription != null && !loopSubscription.isUnsubscribed()) loopSubscription.unsubscribe();
+        if (subscription != null && !subscription.isUnsubscribed()) subscription.unsubscribe();
+
+        loopSubscription = Observable.interval(INITIAL_DELAY, PERIOD, TimeUnit.SECONDS)
+                                     .subscribe(new Subscriber<Long>() {
+                                         @Override
+                                         public void onCompleted() {
+
+                                         }
+
+                                         @Override
+                                         public void onError(Throwable e) {
+
+                                         }
+
+                                         @Override
+                                         public void onNext(Long aLong) {
+                                             MainActivity2.this.reduce();
+                                         }
+                                     });
     }
 
     private void reduce() {
@@ -49,33 +82,49 @@ public class MainActivity2 extends AppCompatActivity {
             public Observable<Integer> call() {
 
                 Executor<Integer> executor = MainActivity2.this.getExecutor(new Random().nextInt(10));
-                System.out.printf("executor:   " + executor.value);
+                System.out.println("executor:   " + executor.value);
 
                 return Observable.create(new CallOnSubscribe<>(executor));
             }
         })
-                                 .repeatWhen(new Func1<Observable<? extends Void>, Observable<?>>() {
+                                 .repeatWhen(new Func1<Observable<? extends Void>, Observable<Long>>() {
                                      @Override
-                                     public Observable<?> call(Observable<? extends Void> observable) {
-                                         return Observable.timer(4, TimeUnit.SECONDS, Schedulers.immediate());
+                                     public Observable<Long> call(Observable<? extends Void> observable) {
+
+                                         return observable.map(new Func1<Void, Integer>() {
+                                             @Override
+                                             public Integer call(Void aVoid) {
+                                                 return delayAtomic.get();
+                                             }
+                                         })
+                                                          .concatMap(new Func1<Integer, Observable<Long>>() {
+                                                              @Override
+                                                              public Observable<Long> call(Integer integer) {
+
+                                                                  System.out.println("Delay = [" + "2^" + integer + "] = " +
+                                                                          (int) Math.pow(2, integer));
+
+                                                                  return Observable.timer((long) Math.pow(2, integer), TimeUnit.SECONDS, Schedulers.immediate());
+                                                              }
+                                                          });
                                      }
                                  })
-                                 .subscribeOn(Schedulers.newThread())
-                                 .observeOn(AndroidSchedulers.mainThread())
+                                 .compose(MainActivity2.<Integer>applyNewSchedulers())
                                  .subscribe(new Subscriber<Integer>() {
                                      @Override
                                      public void onCompleted() {
-                                         System.out.println("onCompleted");
+                                         /*因为.repeatWhen()操作符，因此.onCompleted()永远不会调用*/
+                                         //System.out.println("onCompleted");
                                      }
 
                                      @Override
                                      public void onError(Throwable e) {
-
+                                         System.out.println("e = [" + e + "]");
                                      }
 
                                      @Override
                                      public void onNext(Integer integer) {
-                                         System.out.println("OnNext : " + integer);
+                                         //System.out.println("OnNext : " + integer);
                                      }
                                  });
     }
@@ -90,7 +139,6 @@ public class MainActivity2 extends AppCompatActivity {
 
         @Override
         public void call(Subscriber<? super T> subscriber) {
-
             IMArbiter arbiter = new IMArbiter<>(executor, subscriber);
             subscriber.add(arbiter);
             subscriber.setProducer(arbiter);
@@ -116,17 +164,21 @@ public class MainActivity2 extends AppCompatActivity {
             if (!this.compareAndSet(false, true)) return; // Request was already triggered.
 
             long start = System.currentTimeMillis();
-            System.out.println("Start : " + start);
+            //System.out.println("Start : " + start);
             /*this will blocking*/
             T value = executor.execute();
+            if (executor.isCanceled()) System.out.println("Canceled: " + value);
             long end = System.currentTimeMillis();
-            System.out.println("End : " + end);
-            if (!subscriber.isUnsubscribed()) {
+            //System.out.println("End  : " + end);
+            if (!subscriber.isUnsubscribed() && !executor.isCanceled()) {
                 subscriber.onNext(value);
-                System.out.printf("Value:->" + value + "Total:->" + (end - start));
+                System.out.println("Value :   " + value + "  duration : " + (end - start));
                 if (value.getClass()
-                         .isAssignableFrom(Integer.class)) {
-                    if ((Integer) value <= 6) subscriber.onCompleted();
+                         .isAssignableFrom(Integer.class) && (Integer) value <= THRESHOLD) {/*如果小于'THRESHOLD'的话，重试*/
+                    System.out.println("----重试----");
+                    /*设置重试退避时间*/
+                    delayAtomic.set((Integer) value);
+                    subscriber.onCompleted();
                 }
             }
         }
@@ -140,6 +192,11 @@ public class MainActivity2 extends AppCompatActivity {
         public boolean isUnsubscribed() {
             return unsubscribed.get() && executor.isCanceled();
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> Observable.Transformer<T, T> applyNewSchedulers() {
+        return (Observable.Transformer<T, T>) newTransformer;
     }
 
     private <T> Executor<T> getExecutor(T value) {
@@ -156,7 +213,7 @@ public class MainActivity2 extends AppCompatActivity {
         }
 
         public T execute() {
-            SystemClock.sleep(3 * 1000);
+            SystemClock.sleep(2 * 1000);
             return value;
         }
 

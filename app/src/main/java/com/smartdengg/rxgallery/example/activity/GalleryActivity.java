@@ -38,7 +38,6 @@ import com.smartdengg.rxgallery.example.entity.WrapperFolderEntity;
 import com.smartdengg.rxgallery.example.utils.BestBlur;
 import com.smartdengg.rxgallery.example.view.BottomSheetDialog;
 import com.smartdengg.rxgallery.example.view.MarginDecoration;
-import com.smartdengg.rxgallery.usecase.GalleryListUseCase;
 import com.smartdengg.rxgallery.usecase.GalleryMapUseCase;
 import com.squareup.picasso.Picasso;
 import hugo.weaving.DebugLog;
@@ -171,7 +170,7 @@ public class GalleryActivity extends AppCompatActivity {
 
     public static void navigateToGallery(AppCompatActivity startingActivity) {
         startingActivity.startActivity(new Intent(startingActivity, GalleryActivity.class));
-        startingActivity.overridePendingTransition(0, 0);
+        startingActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     @Override
@@ -412,14 +411,15 @@ public class GalleryActivity extends AppCompatActivity {
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(0, 0);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         this.subscription.unsubscribe();
-        Picasso.with(GalleryActivity.this).cancelTag(GalleryImageAdapter.TAG);
+        Picasso.with(GalleryActivity.this)
+               .cancelTag(GalleryImageAdapter.TAG);
         ButterKnife.unbind(GalleryActivity.this);
     }
 }

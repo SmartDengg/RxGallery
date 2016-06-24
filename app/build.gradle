@@ -9,6 +9,14 @@ buildscript {
     classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
   }
 }
+
+def STRING = "String"
+def BUILD_TIME = "BUILD_TIME"
+
+def buildTime() {
+  return new Date().format("yyyy-MM-dd HH:mm:ss Z", TimeZone.getTimeZone("GMT+08"))
+}
+
 android {
   compileSdkVersion rootProject.ext.android.compileSdkVersion
   buildToolsVersion rootProject.ext.android.buildToolsVersion
@@ -21,6 +29,8 @@ android {
     versionName rootProject.ext.android.versionName
     renderscriptTargetApi rootProject.ext.android.renderscriptTargetApi
     renderscriptSupportModeEnabled true
+
+    buildConfigField STRING, BUILD_TIME, "\"${buildTime()}\""
   }
   buildTypes {
     release {
