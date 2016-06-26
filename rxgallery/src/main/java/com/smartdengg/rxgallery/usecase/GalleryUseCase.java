@@ -36,18 +36,16 @@ abstract class GalleryUseCase<T> {
 
     static {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            GalleryUseCase.GALLERY_PROJECTION = new String[] {
-                    MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATE_ADDED,
-                    MediaStore.Images.Media._ID, MediaStore.Images.Media.TITLE, MediaStore.Images.Media.MIME_TYPE,
-                    MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DATE_MODIFIED, MediaStore.Images.Media.WIDTH,
-                    MediaStore.Images.Media.HEIGHT
-            };
+            GalleryUseCase.GALLERY_PROJECTION =
+                    new String[] { MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATE_ADDED,
+                            MediaStore.Images.Media._ID, MediaStore.Images.Media.TITLE, MediaStore.Images.Media.MIME_TYPE,
+                            MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DATE_MODIFIED, MediaStore.Images.Media.WIDTH,
+                            MediaStore.Images.Media.HEIGHT };
         } else {
-            GalleryUseCase.GALLERY_PROJECTION = new String[] {
-                    MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATE_ADDED,
-                    MediaStore.Images.Media._ID, MediaStore.Images.Media.TITLE, MediaStore.Images.Media.MIME_TYPE,
-                    MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DATE_MODIFIED
-            };
+            GalleryUseCase.GALLERY_PROJECTION =
+                    new String[] { MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATE_ADDED,
+                            MediaStore.Images.Media._ID, MediaStore.Images.Media.TITLE, MediaStore.Images.Media.MIME_TYPE,
+                            MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DATE_MODIFIED };
         }
     }
 
@@ -148,7 +146,7 @@ abstract class GalleryUseCase<T> {
         }
     };
 
-    private final Func1<ImageEntity, Boolean> FILTER_FUNCTION = new Func1<ImageEntity, Boolean>() {
+    private static final Func1<ImageEntity, Boolean> FILTER_FUNCTION = new Func1<ImageEntity, Boolean>() {
         @Override
         public Boolean call(ImageEntity imageEntity) {
 

@@ -1,6 +1,7 @@
 package com.smartdengg.rxgallery.usecase;
 
 import android.content.Context;
+import com.smartdengg.rxgallery.IoScheduler;
 import com.smartdengg.rxgallery.entity.FolderEntity;
 import com.smartdengg.rxgallery.entity.ImageEntity;
 import java.io.File;
@@ -13,7 +14,6 @@ import java.util.TreeMap;
 import rx.Observable;
 import rx.functions.Func1;
 import rx.observables.GroupedObservable;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by SmartDengg on 2016/3/5.
@@ -38,46 +38,8 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
     @Override
     protected Observable<Map<String, FolderEntity>> hunter(Observable<ImageEntity> cursorObservable) {
 
-        return cursorObservable.groupBy(new Func1<ImageEntity, String>() {
-                                   @Override
-                                   public String call(ImageEntity imageEntity) {
-                                       File parentFile = new File(imageEntity.getImagePath()).getParentFile();
-                                       return parentFile.getAbsolutePath();
-                                   }
-                               })
-                               .concatMap(new Func1<GroupedObservable<String, ImageEntity>, Observable<Map<String, FolderEntity>>>() {
-                                   @Override
-                                   public Observable<Map<String, FolderEntity>> call(
-                                           final GroupedObservable<String, ImageEntity> groupedObservable) {
-
-                                       return groupedObservable.map(new Func1<ImageEntity, Map<String, FolderEntity>>() {
-                                           @Override
-                                           public Map<String, FolderEntity> call(ImageEntity imageEntity) {
-
-                                               /*全部图片集合*/
-                                               GalleryMapUseCase.this.allPictures.add(imageEntity);
-
-                                               String key = groupedObservable.getKey();
-                                               File folderFile = new File(imageEntity.getImagePath()).getParentFile();
-
-                                               if (!folderListMap.containsKey(key)) {
-
-                                                   FolderEntity folderEntity = GalleryMapUseCase.this.folderEntity.newInstance();
-                                                   folderEntity.setFolderName(folderFile.getName());
-                                                   folderEntity.setFolderPath(folderFile.getAbsolutePath());
-                                                   folderEntity.setThumbPath(imageEntity.getImagePath());
-                                                   folderEntity.addImage(imageEntity);
-
-                                                   folderListMap.put(key, folderEntity);
-                                               } else {
-                                                   folderListMap.get(key).addImage(imageEntity);
-                                               }
-
-                                               return folderListMap;
-                                           }
-                                       });
-                                   }
-                               })
+        return cursorObservable.groupBy(new GroupByFunc())
+                               .concatMap(new ContactMapFunc(this.folderEntity, allPictures, folderListMap))
                                .last()
                                .map(new Func1<Map<String, FolderEntity>, Map<String, FolderEntity>>() {
                                    @Override
@@ -90,23 +52,76 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
                                        allFolderEntity.setImageEntities(allPictures);
                                        entityMap.put((name != null && !name.isEmpty()) ? name : DEFAULT_NAME, allFolderEntity);
 
-                                       /*根据文件夹照片数量排序*/
-                                       Map<String, FolderEntity> folderEntityMap =
-                                               new TreeMap<String, FolderEntity>(new ValueComparator(entityMap));
+                                       /*根据文件夹照片数量降序*/
+                                       Map<String, FolderEntity> folderEntityMap = new TreeMap<>(new ValueComparator(entityMap));
                                        for (Map.Entry<String, FolderEntity> entry : folderListMap.entrySet()) {
                                            folderEntityMap.put(entry.getKey(), entry.getValue());
                                        }
 
-                                       /*clear folder map*/
                                        GalleryMapUseCase.this.folderListMap.clear();
 
                                        return Collections.unmodifiableMap(folderEntityMap);
                                    }
                                })
-                               .subscribeOn(Schedulers.io());
+                               .compose(IoScheduler.<Map<String, FolderEntity>>apply());
     }
 
     //@formatter:on
+    private static final class GroupByFunc implements Func1<ImageEntity, String> {
+
+        @Override
+        public String call(ImageEntity imageEntity) {
+            File parentFile = new File(imageEntity.getImagePath()).getParentFile();
+            return parentFile.getAbsolutePath();
+        }
+    }
+
+    private static final class ContactMapFunc
+            implements Func1<GroupedObservable<String, ImageEntity>, Observable<Map<String, FolderEntity>>> {
+
+        private FolderEntity instance;
+        private List<ImageEntity> pictures;
+        private Map<String, FolderEntity> folderListMap;
+
+        public ContactMapFunc(FolderEntity instance, List<ImageEntity> pictures, Map<String, FolderEntity> folderListMap) {
+            this.instance = instance;
+            this.pictures = pictures;
+            this.folderListMap = folderListMap;
+        }
+
+        @Override
+        public Observable<Map<String, FolderEntity>> call(final GroupedObservable<String, ImageEntity> groupedObservable) {
+
+
+            return groupedObservable.map(new Func1<ImageEntity, Map<String, FolderEntity>>() {
+                @Override
+                public Map<String, FolderEntity> call(ImageEntity imageEntity) {
+
+                    /*All pictures*/
+                    pictures.add(imageEntity);
+
+                    String key = groupedObservable.getKey();
+                    File folderFile = new File(imageEntity.getImagePath()).getParentFile();
+
+                    if (!folderListMap.containsKey(key)) {
+                        FolderEntity clone = instance.newInstance();
+                        clone.setFolderName(folderFile.getName());
+                        clone.setFolderPath(folderFile.getAbsolutePath());
+                        clone.setThumbPath(imageEntity.getImagePath());
+                        clone.addImage(imageEntity);
+                        folderListMap.put(key, clone);
+                    } else {
+                        folderListMap.get(key)
+                                     .addImage(imageEntity);
+                    }
+
+                    return folderListMap;
+                }
+            });
+        }
+    }
+
+    //@formatter:off
     private static final class ValueComparator implements Comparator<String> {
 
         Map<String, FolderEntity> base;
@@ -124,8 +139,7 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
             int lhsCount = lhsEntity.getImageCount();
             int rhsCount = rhsEntity.getImageCount();
 
-            return (lhsCount == rhsCount) ? rhsEntity.getFolderName()
-                                                     .compareTo(lhsEntity.getFolderName()) : rhsCount - lhsCount;
+            return (lhsCount == rhsCount) ? rhsEntity.getFolderName().compareTo(lhsEntity.getFolderName()) : rhsCount - lhsCount;
         }
     }
 }
