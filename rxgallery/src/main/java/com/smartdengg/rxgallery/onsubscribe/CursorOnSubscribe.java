@@ -10,26 +10,26 @@ import rx.subscriptions.Subscriptions;
 /**
  * Created by SmartDengg on 2016/6/11.
  */
-public class InternalOnSubscribe implements Observable.OnSubscribe<Cursor> {
+public class CursorOnSubscribe implements Observable.OnSubscribe<Cursor> {
 
     private String[] GALLERY_PROJECTION;
 
-    private final CursorLoader internalLoader;
+    private final CursorLoader externalLoader;
 
-    public InternalOnSubscribe(CursorLoader internalLoader, String[] GALLERY_PROJECTION) {
-        this.internalLoader = internalLoader;
+    public CursorOnSubscribe(CursorLoader internalLoader, String[] GALLERY_PROJECTION) {
+        this.externalLoader = internalLoader;
         this.GALLERY_PROJECTION = GALLERY_PROJECTION;
     }
 
     @Override
     public void call(Subscriber<? super Cursor> subscriber) {
-        final Cursor cursor = internalLoader.loadInBackground();
+        final Cursor cursor = externalLoader.loadInBackground();
 
         subscriber.add(Subscriptions.create(new Action0() {
             @Override
             public void call() {
-                if (internalLoader.isStarted() && cursor != null && !cursor.isClosed()) {
-                    internalLoader.cancelLoad();
+                if (externalLoader.isStarted() && cursor != null && !cursor.isClosed()) {
+                    externalLoader.cancelLoad();
                     cursor.close();
                 }
             }

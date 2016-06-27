@@ -9,11 +9,12 @@ import android.provider.MediaStore;
 import com.smartdengg.rxgallery.Utils;
 import com.smartdengg.rxgallery.entity.FolderEntity;
 import com.smartdengg.rxgallery.entity.ImageEntity;
-import com.smartdengg.rxgallery.onsubscribe.InternalOnSubscribe;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import rx.Observable;
+import rx.functions.Action1;
+import rx.functions.Func0;
 import rx.functions.Func1;
 
 /**
@@ -36,16 +37,18 @@ abstract class GalleryUseCase<T> {
 
     static {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            GalleryUseCase.GALLERY_PROJECTION =
-                    new String[] { MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATE_ADDED,
-                            MediaStore.Images.Media._ID, MediaStore.Images.Media.TITLE, MediaStore.Images.Media.MIME_TYPE,
-                            MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DATE_MODIFIED, MediaStore.Images.Media.WIDTH,
-                            MediaStore.Images.Media.HEIGHT };
+            GalleryUseCase.GALLERY_PROJECTION = new String[] {
+                    MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATE_ADDED,
+                    MediaStore.Images.Media._ID, MediaStore.Images.Media.TITLE, MediaStore.Images.Media.MIME_TYPE,
+                    MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DATE_MODIFIED, MediaStore.Images.Media.WIDTH,
+                    MediaStore.Images.Media.HEIGHT
+            };
         } else {
-            GalleryUseCase.GALLERY_PROJECTION =
-                    new String[] { MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATE_ADDED,
-                            MediaStore.Images.Media._ID, MediaStore.Images.Media.TITLE, MediaStore.Images.Media.MIME_TYPE,
-                            MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DATE_MODIFIED };
+            GalleryUseCase.GALLERY_PROJECTION = new String[] {
+                    MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATE_ADDED,
+                    MediaStore.Images.Media._ID, MediaStore.Images.Media.TITLE, MediaStore.Images.Media.MIME_TYPE,
+                    MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DATE_MODIFIED
+            };
         }
     }
 
@@ -81,11 +84,31 @@ abstract class GalleryUseCase<T> {
     }
 
     private Observable<Cursor> getInternalObservable() {
-        return Observable.create(new InternalOnSubscribe(this.internalLoader, GALLERY_PROJECTION));
+        return Observable.defer(new Func0<Observable<Cursor>>() {
+            @Override
+            public Observable<Cursor> call() {
+                return Observable.using(new Func0<Cursor>() {
+                    @Override
+                    public Cursor call() {
+                        return GalleryUseCase.this.internalLoader.loadInBackground();
+                    }
+                }, new CursorFactory(), DISPOSE_ACTION);
+            }
+        });
     }
 
     private Observable<Cursor> getExternalObservable() {
-        return Observable.create(new InternalOnSubscribe(this.externalLoader, GALLERY_PROJECTION));
+        return Observable.defer(new Func0<Observable<Cursor>>() {
+            @Override
+            public Observable<Cursor> call() {
+                return Observable.using(new Func0<Cursor>() {
+                    @Override
+                    public Cursor call() {
+                        return GalleryUseCase.this.externalLoader.loadInBackground();
+                    }
+                }, new CursorFactory(), DISPOSE_ACTION);
+            }
+        });
     }
 
     private Observable<ImageEntity> transferObservable(Observable<Cursor> cursorObservable) {
@@ -126,6 +149,13 @@ abstract class GalleryUseCase<T> {
         clone.setModifyDate(modifyDate);
         return clone;
     }
+
+    private static Action1<Cursor> DISPOSE_ACTION = new Action1<Cursor>() {
+        @Override
+        public void call(Cursor cursor) {
+            if (!cursor.isClosed()) cursor.close();
+        }
+    };
 
     private static final Observable.Transformer<Cursor, Cursor> TAKEUNTIL_TRANSFORMER = new Observable.Transformer<Cursor, Cursor>() {
         @Override

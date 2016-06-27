@@ -48,10 +48,8 @@ public class PreviewActivity extends AppCompatActivity {
         @Override
         public void transformPage(View page, float position) {
 
-            /*感谢来自Android官方的代码
-            * 以及
+            /*
             * http://stackoverflow.com/questions/23433027/onpagechangelistener-alpha-crossfading/23526632#23526632
-            * 和
             * http://andraskindler.com/blog/2013/create-viewpager-transitions-a-pagertransformer-example/
             * */
             int pageWidth = page.getWidth();
@@ -111,7 +109,7 @@ public class PreviewActivity extends AppCompatActivity {
         Intent intent = new Intent(startingActivity, PreviewActivity.class);
         intent.putExtra(ENTITIES, (Serializable) imageEntities);
         startingActivity.startActivity(intent);
-        startingActivity.overridePendingTransition(0, 0);
+        startingActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_in);
     }
 
     @Override
@@ -157,7 +155,7 @@ public class PreviewActivity extends AppCompatActivity {
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(0, 0);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     @Override

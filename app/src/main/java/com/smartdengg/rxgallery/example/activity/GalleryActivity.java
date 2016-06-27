@@ -170,7 +170,8 @@ public class GalleryActivity extends AppCompatActivity {
 
     public static void navigateToGallery(AppCompatActivity startingActivity) {
         startingActivity.startActivity(new Intent(startingActivity, GalleryActivity.class));
-        startingActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        //startingActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        startingActivity.overridePendingTransition(0, 0);
     }
 
     @Override

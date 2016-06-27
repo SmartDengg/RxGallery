@@ -121,10 +121,10 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
 
             ViewCompat.animate(itemView)
                       .translationY(0.0f)
-                      .setStartDelay(position * 20)
+                      .setStartDelay(position * 30)
                       .setInterpolator(new DecelerateInterpolator(2.0f))
                       .setDuration(context.getResources()
-                                          .getInteger(android.R.integer.config_mediumAnimTime))
+                                          .getInteger(android.R.integer.config_longAnimTime))
                       .withLayer()
                       .setListener(new ViewPropertyAnimatorListenerAdapter() {
                           @Override
