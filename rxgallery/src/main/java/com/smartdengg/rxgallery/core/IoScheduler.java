@@ -1,4 +1,4 @@
-package com.smartdengg.rxgallery;
+package com.smartdengg.rxgallery.core;
 
 import rx.Observable;
 import rx.schedulers.Schedulers;
@@ -6,8 +6,8 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Joker on 2015/8/10.
  */
-@SuppressWarnings("All")
-public class IoScheduler {
+@SuppressWarnings("unchecked")
+class IoScheduler {
 
     static final Observable.Transformer ioTransformer = new Observable.Transformer() {
         @Override
@@ -19,8 +19,8 @@ public class IoScheduler {
     /**
      * Don't break the chain: use RxJava's compose() operator
      */
-
-    public static <T> Observable.Transformer<T, T> apply() {
+    static <T> Observable.Transformer<T, T> apply() {
         return (Observable.Transformer<T, T>) ioTransformer;
     }
+
 }

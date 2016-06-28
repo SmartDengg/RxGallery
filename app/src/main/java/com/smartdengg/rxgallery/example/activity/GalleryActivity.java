@@ -38,9 +38,8 @@ import com.smartdengg.rxgallery.example.entity.WrapperFolderEntity;
 import com.smartdengg.rxgallery.example.utils.BestBlur;
 import com.smartdengg.rxgallery.example.view.BottomSheetDialog;
 import com.smartdengg.rxgallery.example.view.MarginDecoration;
-import com.smartdengg.rxgallery.usecase.GalleryMapUseCase;
+import com.smartdengg.rxgallery.core.GalleryMapUseCase;
 import com.squareup.picasso.Picasso;
-import hugo.weaving.DebugLog;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -247,7 +246,6 @@ public class GalleryActivity extends AppCompatActivity {
         PreviewActivity.navigateToPreview(GalleryActivity.this, imageEntities);
     }
 
-    @DebugLog
     private void loadGallery() {
 
         subscription = GalleryMapUseCase.createdUseCase(GalleryActivity.this)

@@ -1,7 +1,6 @@
-package com.smartdengg.rxgallery.usecase;
+package com.smartdengg.rxgallery.core;
 
 import android.content.Context;
-import com.smartdengg.rxgallery.IoScheduler;
 import com.smartdengg.rxgallery.entity.FolderEntity;
 import com.smartdengg.rxgallery.entity.ImageEntity;
 import java.io.File;

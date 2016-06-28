@@ -1,7 +1,6 @@
-package com.smartdengg.rxgallery.usecase;
+package com.smartdengg.rxgallery.core;
 
 import android.content.Context;
-import com.smartdengg.rxgallery.IoScheduler;
 import com.smartdengg.rxgallery.entity.FolderEntity;
 import com.smartdengg.rxgallery.entity.ImageEntity;
 import java.io.File;
@@ -58,6 +57,7 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
                                            folderEntityMap.put(entry.getKey(), entry.getValue());
                                        }
 
+                                       //@formatter:on
                                        GalleryMapUseCase.this.folderListMap.clear();
 
                                        return Collections.unmodifiableMap(folderEntityMap);
@@ -91,7 +91,6 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
 
         @Override
         public Observable<Map<String, FolderEntity>> call(final GroupedObservable<String, ImageEntity> groupedObservable) {
-
 
             return groupedObservable.map(new Func1<ImageEntity, Map<String, FolderEntity>>() {
                 @Override
