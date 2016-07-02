@@ -8,203 +8,198 @@ import android.os.Parcelable;
  */
 public class ImageEntity implements Cloneable, Parcelable {
 
-    private String imagePath;
-    private String imageName;
-    private long id;
-    private long addDate;
-
-    private String title;
-    private String mimeType;
-    private String width;
-    private String height;
-
-    private long size;
-    private long modifyDate;
-
-    private boolean isChecked = false;
-
-    public ImageEntity() {
+  public static final Creator<ImageEntity> CREATOR = new Creator<ImageEntity>() {
+    @Override public ImageEntity createFromParcel(Parcel source) {
+      return new ImageEntity(source);
     }
 
-    public ImageEntity newInstance() {
-
-        try {
-            return (ImageEntity) super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return new ImageEntity();
+    @Override public ImageEntity[] newArray(int size) {
+      return new ImageEntity[size];
     }
+  };
+  private String imagePath;
+  private String imageName;
+  private long id;
+  private long addDate;
+  private String title;
+  private String mimeType;
+  private String width;
+  private String height;
+  private long size;
+  private long modifyDate;
+  private boolean isChecked = false;
 
-    public String getImagePath() {
-        return imagePath;
+  public ImageEntity() {
+  }
+
+  protected ImageEntity(Parcel in) {
+    this.imagePath = in.readString();
+    this.imageName = in.readString();
+    this.id = in.readLong();
+    this.addDate = in.readLong();
+    this.title = in.readString();
+    this.mimeType = in.readString();
+    this.width = in.readString();
+    this.height = in.readString();
+    this.size = in.readLong();
+    this.modifyDate = in.readLong();
+    this.isChecked = in.readByte() != 0;
+  }
+
+  public ImageEntity newInstance() {
+
+    try {
+      return (ImageEntity) super.clone();
+    } catch (CloneNotSupportedException e) {
+      e.printStackTrace();
     }
+    return new ImageEntity();
+  }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
+  public String getImagePath() {
+    return imagePath;
+  }
 
-    public String getImageName() {
-        return imageName;
-    }
+  public void setImagePath(String imagePath) {
+    this.imagePath = imagePath;
+  }
 
-    public void setImageName(String imageName) {
-        this.imageName = imageName;
-    }
+  public String getImageName() {
+    return imageName;
+  }
 
-    public long getId() {
-        return id;
-    }
+  public void setImageName(String imageName) {
+    this.imageName = imageName;
+  }
 
-    public void setId(long id) {
-        this.id = id;
-    }
+  public long getId() {
+    return id;
+  }
 
-    public long getAddDate() {
-        return addDate;
-    }
+  public void setId(long id) {
+    this.id = id;
+  }
 
-    public void setAddDate(long addDate) {
-        this.addDate = addDate;
-    }
+  public long getAddDate() {
+    return addDate;
+  }
 
-    public String getTitle() {
-        return title;
-    }
+  public void setAddDate(long addDate) {
+    this.addDate = addDate;
+  }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public String getMimeType() {
-        return mimeType;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
-    }
+  public String getMimeType() {
+    return mimeType;
+  }
 
-    public String getWidth() {
-        return width;
-    }
+  public void setMimeType(String mimeType) {
+    this.mimeType = mimeType;
+  }
 
-    public void setWidth(String width) {
-        this.width = width;
-    }
+  public String getWidth() {
+    return width;
+  }
 
-    public String getHeight() {
-        return height;
-    }
+  public void setWidth(String width) {
+    this.width = width;
+  }
 
-    public void setHeight(String height) {
-        this.height = height;
-    }
+  public String getHeight() {
+    return height;
+  }
 
-    public long getSize() {
-        return size;
-    }
+  public void setHeight(String height) {
+    this.height = height;
+  }
 
-    public void setSize(long size) {
-        this.size = size;
-    }
+  public long getSize() {
+    return size;
+  }
 
-    public long getModifyDate() {
-        return modifyDate;
-    }
+  public void setSize(long size) {
+    this.size = size;
+  }
 
-    public void setModifyDate(long modifyDate) {
-        this.modifyDate = modifyDate;
-    }
+  public long getModifyDate() {
+    return modifyDate;
+  }
 
-    public boolean isChecked() {
-        return isChecked;
-    }
+  public void setModifyDate(long modifyDate) {
+    this.modifyDate = modifyDate;
+  }
 
-    public void setChecked(boolean checked) {
-        isChecked = checked;
-    }
+  public boolean isChecked() {
+    return isChecked;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+  public void setChecked(boolean checked) {
+    isChecked = checked;
+  }
 
-        ImageEntity that = (ImageEntity) o;
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
 
-        return this.imageName.equalsIgnoreCase(that.getImageName()) &&  //
-                this.imagePath.equalsIgnoreCase(that.getImagePath());
-    }
+    ImageEntity that = (ImageEntity) o;
 
-    @Override
-    public int hashCode() {
-        int result = imagePath != null ? imagePath.hashCode() : 0;
-        result = 31 * result + (imageName != null ? imageName.hashCode() : 0);
-        result = 31 * result + (int) (id ^ (id >>> 32));
-        result = 31 * result + (int) (addDate ^ (addDate >>> 32));
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (mimeType != null ? mimeType.hashCode() : 0);
-        result = 31 * result + (width != null ? width.hashCode() : 0);
-        result = 31 * result + (height != null ? height.hashCode() : 0);
-        result = 31 * result + (int) (size ^ (size >>> 32));
-        result = 31 * result + (int) (modifyDate ^ (modifyDate >>> 32));
-        result = 31 * result + (isChecked ? 1 : 0);
-        return result;
-    }
+    return this.imageName.equalsIgnoreCase(that.getImageName()) &&  //
+        this.imagePath.equalsIgnoreCase(that.getImagePath());
+  }
 
-    @Override
-    public String toString() {
-        return "ImageEntity{" +
-                "imagePath='" + imagePath + '\'' +
-                ", imageName='" + imageName + '\'' +
-                ", id=" + id +
-                ", addDate=" + addDate +
-                ", title='" + title + '\'' +
-                ", mimeType='" + mimeType + '\'' +
-                ", width='" + width + '\'' +
-                ", height='" + height + '\'' +
-                ", size=" + size +
-                ", modifyDate=" + modifyDate +
-                ", isChecked=" + isChecked +
-                '}';
-    }
+  @Override public int hashCode() {
+    int result = imagePath != null ? imagePath.hashCode() : 0;
+    result = 31 * result + (imageName != null ? imageName.hashCode() : 0);
+    result = 31 * result + (int) (id ^ (id >>> 32));
+    result = 31 * result + (int) (addDate ^ (addDate >>> 32));
+    result = 31 * result + (title != null ? title.hashCode() : 0);
+    result = 31 * result + (mimeType != null ? mimeType.hashCode() : 0);
+    result = 31 * result + (width != null ? width.hashCode() : 0);
+    result = 31 * result + (height != null ? height.hashCode() : 0);
+    result = 31 * result + (int) (size ^ (size >>> 32));
+    result = 31 * result + (int) (modifyDate ^ (modifyDate >>> 32));
+    result = 31 * result + (isChecked ? 1 : 0);
+    return result;
+  }
 
-    @Override
-    public int describeContents() { return 0; }
+  @Override public String toString() {
+    return "ImageEntity{" +
+        "imagePath='" + imagePath + '\'' +
+        ", imageName='" + imageName + '\'' +
+        ", id=" + id +
+        ", addDate=" + addDate +
+        ", title='" + title + '\'' +
+        ", mimeType='" + mimeType + '\'' +
+        ", width='" + width + '\'' +
+        ", height='" + height + '\'' +
+        ", size=" + size +
+        ", modifyDate=" + modifyDate +
+        ", isChecked=" + isChecked +
+        '}';
+  }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.imagePath);
-        dest.writeString(this.imageName);
-        dest.writeLong(this.id);
-        dest.writeLong(this.addDate);
-        dest.writeString(this.title);
-        dest.writeString(this.mimeType);
-        dest.writeString(this.width);
-        dest.writeString(this.height);
-        dest.writeLong(this.size);
-        dest.writeLong(this.modifyDate);
-        dest.writeByte(this.isChecked ? (byte) 1 : (byte) 0);
-    }
+  @Override public int describeContents() {
+    return 0;
+  }
 
-    protected ImageEntity(Parcel in) {
-        this.imagePath = in.readString();
-        this.imageName = in.readString();
-        this.id = in.readLong();
-        this.addDate = in.readLong();
-        this.title = in.readString();
-        this.mimeType = in.readString();
-        this.width = in.readString();
-        this.height = in.readString();
-        this.size = in.readLong();
-        this.modifyDate = in.readLong();
-        this.isChecked = in.readByte() != 0;
-    }
-
-    public static final Creator<ImageEntity> CREATOR = new Creator<ImageEntity>() {
-        @Override
-        public ImageEntity createFromParcel(Parcel source) {return new ImageEntity(source);}
-
-        @Override
-        public ImageEntity[] newArray(int size) {return new ImageEntity[size];}
-    };
+  @Override public void writeToParcel(Parcel dest, int flags) {
+    dest.writeString(this.imagePath);
+    dest.writeString(this.imageName);
+    dest.writeLong(this.id);
+    dest.writeLong(this.addDate);
+    dest.writeString(this.title);
+    dest.writeString(this.mimeType);
+    dest.writeString(this.width);
+    dest.writeString(this.height);
+    dest.writeLong(this.size);
+    dest.writeLong(this.modifyDate);
+    dest.writeByte(this.isChecked ? (byte) 1 : (byte) 0);
+  }
 }

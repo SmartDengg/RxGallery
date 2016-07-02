@@ -32,28 +32,27 @@ import okhttp3.OkHttpClient;
  */
 public class MyApplication extends Application {
 
-    private Picasso.Listener picassoListener = new Picasso.Listener() {
-        @Override
-        public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-            Logger.d("Picasso failure: %s \n    path = %s", exception.toString(), uri);
-        }
-    };
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        Picasso picasso = new Picasso.Builder(MyApplication.this).downloader(new OkHttp3Downloader(new OkHttpClient()))
-                                                                 .listener(picassoListener)
-                                                                 .defaultBitmapConfig(Bitmap.Config.ARGB_8888)
-                                                                 .addRequestHandler(new DataUriRequestHandler())
-                                                                 .build();
-
-        Picasso.setSingletonInstance(picasso);
-
-        Logger.init(this.getPackageName())
-              .setMethodOffset(0)
-              .setMethodCount(4)
-              .setLogLevel(LogLevel.FULL);
+  private Picasso.Listener picassoListener = new Picasso.Listener() {
+    @Override public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+      Logger.d("Picasso failure: %s \n    path = %s", exception.toString(), uri);
     }
+  };
+
+  @Override public void onCreate() {
+    super.onCreate();
+
+    Picasso picasso = new Picasso.Builder(MyApplication.this).downloader(
+        new OkHttp3Downloader(new OkHttpClient()))
+        .listener(picassoListener)
+        .defaultBitmapConfig(Bitmap.Config.ARGB_8888)
+        .addRequestHandler(new DataUriRequestHandler())
+        .build();
+
+    Picasso.setSingletonInstance(picasso);
+
+    Logger.init(this.getPackageName())
+        .setMethodOffset(0)
+        .setMethodCount(4)
+        .setLogLevel(LogLevel.FULL);
+  }
 }

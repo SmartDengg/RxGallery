@@ -14,46 +14,46 @@ import java.util.Locale;
  */
 public class FileUtils {
 
-    private final static String PATTERN = "yyyyMMddHHmmss";
+  private final static String PATTERN = "yyyyMMddHHmmss";
 
-    public static File createTmpFile(Context context, String filePath) {
+  public static File createTmpFile(Context context, String filePath) {
 
-        String timeStamp = new SimpleDateFormat(PATTERN, Locale.CHINA).format(new Date());
+    String timeStamp = new SimpleDateFormat(PATTERN, Locale.CHINA).format(new Date());
 
-        String externalStorageState = Environment.getExternalStorageState();
+    String externalStorageState = Environment.getExternalStorageState();
 
-        File dir = new File(Environment.getExternalStorageDirectory() + filePath);
+    File dir = new File(Environment.getExternalStorageDirectory() + filePath);
 
-        if (externalStorageState.equals(Environment.MEDIA_MOUNTED)) {
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-            return new File(dir, timeStamp + ".jpg");
-        } else {
-            File cacheDir = context.getCacheDir();
-            return new File(cacheDir, timeStamp + ".jpg");
-        }
+    if (externalStorageState.equals(Environment.MEDIA_MOUNTED)) {
+      if (!dir.exists()) {
+        dir.mkdirs();
+      }
+      return new File(dir, timeStamp + ".jpg");
+    } else {
+      File cacheDir = context.getCacheDir();
+      return new File(cacheDir, timeStamp + ".jpg");
     }
+  }
 
-    public static void createFile(String filePath) {
-        String externalStorageState = Environment.getExternalStorageState();
+  public static void createFile(String filePath) {
+    String externalStorageState = Environment.getExternalStorageState();
 
-        File dir = new File(Environment.getExternalStorageDirectory() + filePath);
-        File cropFile = new File(Environment.getExternalStorageDirectory() + filePath + "/crop");
+    File dir = new File(Environment.getExternalStorageDirectory() + filePath);
+    File cropFile = new File(Environment.getExternalStorageDirectory() + filePath + "/crop");
 
-        if (externalStorageState.equals(Environment.MEDIA_MOUNTED)) {
-            if (!cropFile.exists()) {
-                cropFile.mkdirs();
-            }
+    if (externalStorageState.equals(Environment.MEDIA_MOUNTED)) {
+      if (!cropFile.exists()) {
+        cropFile.mkdirs();
+      }
 
-            File file = new File(dir, ".nomedia");
-            if (!file.exists()) {
-                try {
-                    file.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+      File file = new File(dir, ".nomedia");
+      if (!file.exists()) {
+        try {
+          file.createNewFile();
+        } catch (IOException e) {
+          e.printStackTrace();
         }
+      }
     }
+  }
 }

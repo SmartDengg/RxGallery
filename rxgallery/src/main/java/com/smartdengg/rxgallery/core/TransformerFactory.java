@@ -8,17 +8,17 @@ import rx.Observable;
  */
 public class TransformerFactory {
 
-    private TransformerFactory() {
-        throw new IllegalStateException("No instance");
-    }
+  private TransformerFactory() {
+    throw new IllegalStateException("No instance");
+  }
 
-    @SuppressWarnings("unchecked")
-    static <T> Observable.Transformer<T, T> applyTimeTransformer() {
-        return (Observable.Transformer<T, T>) new TimeTransformer<>();
-    }
+  @SuppressWarnings("unchecked") static <T> Observable.Transformer<T, T> applyTimeTransformer() {
+    return (Observable.Transformer<T, T>) new TimeTransformer<>();
+  }
 
-    @SuppressWarnings("unchecked")
-    static <T,R> Observable.Transformer<T, R> applyCursorTransformer(String[] galleryProjection, ImageEntity parent) {
-        return (Observable.Transformer<T, R>) new CursorTransformer(galleryProjection, parent);
-    }
+  @SuppressWarnings("unchecked")
+  static <T, R> Observable.Transformer<T, R> applyCursorTransformer(String[] galleryProjection,
+      ImageEntity parent) {
+    return (Observable.Transformer<T, R>) new CursorTransformer(galleryProjection, parent);
+  }
 }

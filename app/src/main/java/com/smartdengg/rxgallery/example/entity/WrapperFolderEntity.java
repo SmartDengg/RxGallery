@@ -7,13 +7,13 @@ import com.smartdengg.rxgallery.entity.FolderEntity;
  */
 public class WrapperFolderEntity extends FolderEntity {
 
-    private boolean checked;
+  private boolean checked;
 
-    public void setChecked(boolean checked) {
-        this.checked = checked;
-    }
+  public boolean isChecked() {
+    return checked;
+  }
 
-    public boolean isChecked() {
-        return checked;
-    }
+  public void setChecked(boolean checked) {
+    this.checked = checked;
+  }
 }

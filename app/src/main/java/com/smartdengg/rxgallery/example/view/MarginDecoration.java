@@ -8,15 +8,14 @@ import com.smartdengg.rxgallery.example.R;
 
 public class MarginDecoration extends RecyclerView.ItemDecoration {
 
-    private int margin;
+  private int margin;
 
-    public MarginDecoration(Context context) {
-        margin = context.getResources()
-                        .getDimensionPixelSize(R.dimen.material_4dp);
-    }
+  public MarginDecoration(Context context) {
+    margin = context.getResources().getDimensionPixelSize(R.dimen.material_4dp);
+  }
 
-    @Override
-    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-        outRect.set(margin, margin, margin, margin);
-    }
+  @Override public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+      RecyclerView.State state) {
+    outRect.set(margin, margin, margin, margin);
+  }
 }

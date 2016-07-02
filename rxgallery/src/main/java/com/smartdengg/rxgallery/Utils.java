@@ -8,11 +8,11 @@ import android.content.pm.PackageManager;
  */
 public class Utils {
 
-    private Utils() {
-        throw new IllegalStateException("No instance");
-    }
+  private Utils() {
+    throw new IllegalStateException("No instance");
+  }
 
-    public static boolean hasPermission(Context context, String permission) {
-        return context.checkCallingOrSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
-    }
+  public static boolean hasPermission(Context context, String permission) {
+    return context.checkCallingOrSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
+  }
 }

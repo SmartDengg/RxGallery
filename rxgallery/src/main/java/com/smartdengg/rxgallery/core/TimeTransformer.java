@@ -9,16 +9,13 @@ import rx.schedulers.TimeInterval;
  */
 class TimeTransformer<T> implements Observable.Transformer<T, T> {
 
-    @Override
-    public Observable<T> call(Observable<T> tObservable) {
-        return tObservable.timeInterval()
-                          .map(new Func1<TimeInterval<T>, T>() {
-                              @Override
-                              public T call(TimeInterval<T> tTimeInterval) {
-                                  long milliseconds = tTimeInterval.getIntervalInMilliseconds();
-                                  System.out.println("Rx-Gallery cast : " + milliseconds);
-                                  return tTimeInterval.getValue();
-                              }
-                          });
-    }
+  @Override public Observable<T> call(Observable<T> tObservable) {
+    return tObservable.timeInterval().map(new Func1<TimeInterval<T>, T>() {
+      @Override public T call(TimeInterval<T> tTimeInterval) {
+        long milliseconds = tTimeInterval.getIntervalInMilliseconds();
+        System.out.println("Rx-Gallery cast : " + milliseconds);
+        return tTimeInterval.getValue();
+      }
+    });
+  }
 }
