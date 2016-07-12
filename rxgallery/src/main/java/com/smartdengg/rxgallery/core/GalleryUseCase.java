@@ -58,7 +58,6 @@ abstract class GalleryUseCase<T> {
   final CursorLoader internalLoader;
   String name;
   FolderEntity folderEntity = new FolderEntity();
-  ImageEntity imageEntity = new ImageEntity();
   Map<String, FolderEntity> folderListMap = new HashMap<>();
   private Context context;
 
@@ -103,8 +102,7 @@ abstract class GalleryUseCase<T> {
 
   private Observable<ImageEntity> transferObservable(Observable<Cursor> cursorObservable) {
     return cursorObservable.compose(
-        TransformerFactory.<Cursor, ImageEntity>applyCursorTransformer(GALLERY_PROJECTION,
-            imageEntity));
+        TransformerFactory.<Cursor, ImageEntity>applyCursorTransformer(GALLERY_PROJECTION));
   }
 
   private Observable<Cursor> getObservable(@Type final int type) {

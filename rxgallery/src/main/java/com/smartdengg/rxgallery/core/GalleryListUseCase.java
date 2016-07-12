@@ -32,9 +32,8 @@ public class GalleryListUseCase extends GalleryUseCase<List<FolderEntity>> {
     return new GalleryListUseCase(context, name);
   }
 
-  //@formatter:on
-  @Override protected Observable<List<FolderEntity>> hunter(
-      Observable<ImageEntity> cursorObservable) {
+  @Override
+  protected Observable<List<FolderEntity>> hunter(Observable<ImageEntity> cursorObservable) {
 
     return cursorObservable.collect(new Func0<List<FolderEntity>>() {
       @Override public List<FolderEntity> call() {
@@ -44,7 +43,6 @@ public class GalleryListUseCase extends GalleryUseCase<List<FolderEntity>> {
         .map(new Func1<List<FolderEntity>, List<FolderEntity>>() {
           @Override public List<FolderEntity> call(List<FolderEntity> folderEntities) {
 
-            //@formatter:off
             FolderEntity clone = folderEntity.newInstance();
             clone.setFolderName((name != null && !name.isEmpty()) ? name : "全部图片");
             clone.setFolderPath("");

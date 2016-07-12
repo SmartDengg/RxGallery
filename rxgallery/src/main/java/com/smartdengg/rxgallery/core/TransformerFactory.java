@@ -1,6 +1,5 @@
 package com.smartdengg.rxgallery.core;
 
-import com.smartdengg.rxgallery.entity.ImageEntity;
 import rx.Observable;
 
 /**
@@ -17,8 +16,7 @@ public class TransformerFactory {
   }
 
   @SuppressWarnings("unchecked")
-  static <T, R> Observable.Transformer<T, R> applyCursorTransformer(String[] galleryProjection,
-      ImageEntity parent) {
-    return (Observable.Transformer<T, R>) new CursorTransformer(galleryProjection, parent);
+  static <T, R> Observable.Transformer<T, R> applyCursorTransformer(String[] galleryProjection) {
+    return (Observable.Transformer<T, R>) new CursorTransformer(galleryProjection);
   }
 }

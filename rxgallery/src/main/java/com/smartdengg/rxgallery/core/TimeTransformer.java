@@ -13,7 +13,7 @@ class TimeTransformer<T> implements Observable.Transformer<T, T> {
     return tObservable.timeInterval().map(new Func1<TimeInterval<T>, T>() {
       @Override public T call(TimeInterval<T> tTimeInterval) {
         long milliseconds = tTimeInterval.getIntervalInMilliseconds();
-        System.out.println("Rx-Gallery cast : " + milliseconds);
+        System.out.println("  --->  Rx-Gallery cast : " + milliseconds);
         return tTimeInterval.getValue();
       }
     });
