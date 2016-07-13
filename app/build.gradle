@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.jakewharton.hugo'
+//apply plugin: 'com.jakewharton.hugo'
 
-buildscript {
+/*buildscript {
   dependencies {
     repositories {
       mavenCentral()
     }
     classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
   }
-}
+}*/
 
 def STRING = "String"
 def BUILD_TIME = "BUILD_TIME"
