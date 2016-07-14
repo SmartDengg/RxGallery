@@ -16,6 +16,13 @@ public class MainActivity extends AppCompatActivity {
   }
 
   @NonNull @OnClick(R.id.gallery_button) protected void onGalleryClick() {
+
+
+
+
+
+
+
     GalleryActivity.navigateToGallery(MainActivity.this);
   }
 
