@@ -9,7 +9,7 @@ import rx.functions.Func1;
 /**
  * Created by Joker on 2016/6/28.
  */
-class CursorTransformer implements Observable.Transformer<Cursor, ImageEntity> {
+class CursorTransformer implements Observable.Transformer<Cursor, Observable<ImageEntity>> {
 
   private static final Func1<Cursor, Boolean> STOP_PREDICATE_FUNCTION =
       new Func1<Cursor, Boolean>() {
@@ -35,12 +35,12 @@ class CursorTransformer implements Observable.Transformer<Cursor, ImageEntity> {
     this.galleryProjection = galleryProjection;
   }
 
-  @Override public Observable<ImageEntity> call(Observable<Cursor> cursorObservable) {
+  @Override public Observable<Observable<ImageEntity>> call(Observable<Cursor> cursorObservable) {
 
     return cursorObservable.takeUntil(STOP_PREDICATE_FUNCTION)
         .onBackpressureBuffer()
         .lift(new OperatorMapCursorToEntity(galleryProjection))
-        .filter(FILTER_FUNCTION);
+        .filter(FILTER_FUNCTION)
+        .nest();
   }
-
 }

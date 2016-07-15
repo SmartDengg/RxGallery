@@ -16,19 +16,11 @@ public class MainActivity extends AppCompatActivity {
   }
 
   @NonNull @OnClick(R.id.gallery_button) protected void onGalleryClick() {
-
-
-
-
-
-
-
     GalleryActivity.navigateToGallery(MainActivity.this);
   }
 
   @Override protected void onDestroy() {
     super.onDestroy();
-
     ButterKnife.unbind(MainActivity.this);
   }
 }

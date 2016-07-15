@@ -19,6 +19,7 @@ import java.util.Map;
 import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func0;
+import rx.functions.Func1;
 
 /**
  * Created by SmartDengg on 2016/3/5.
@@ -73,7 +74,15 @@ abstract class GalleryUseCase<T> {
   }
 
   public Observable<T> retrieveInternalGallery() {
-    return this.hunter(this.transferObservable(this.getObservable(TYPE_INTERNAL)))
+
+    return this.getObservable(TYPE_INTERNAL)
+        .compose(TransformerFactory.applyCursorTransformer(GALLERY_PROJECTION))
+        .concatMap(new Func1<Observable<ImageEntity>, Observable<? extends T>>() {
+          @Override
+          public Observable<? extends T> call(Observable<ImageEntity> imageEntityObservable) {
+            return GalleryUseCase.this.hunter(imageEntityObservable);
+          }
+        })
         .compose(TransformerFactory.<T>applyTimeTransformer());
   }
 
@@ -84,7 +93,14 @@ abstract class GalleryUseCase<T> {
           "missing permission: 'android.permission.READ_EXTERNAL_STORAGE' in your Manifest.xml");
     }
 
-    return this.hunter(this.transferObservable(this.getObservable(TYPE_EXTERNAL)))
+    return this.getObservable(TYPE_EXTERNAL)
+        .compose(TransformerFactory.applyCursorTransformer(GALLERY_PROJECTION))
+        .concatMap(new Func1<Observable<ImageEntity>, Observable<? extends T>>() {
+          @Override
+          public Observable<? extends T> call(Observable<ImageEntity> imageEntityObservable) {
+            return GalleryUseCase.this.hunter(imageEntityObservable);
+          }
+        })
         .compose(TransformerFactory.<T>applyTimeTransformer());
   }
 
@@ -95,14 +111,15 @@ abstract class GalleryUseCase<T> {
           "miss 'android.permission.READ_EXTERNAL_STORAGE' in your Manifest.xml");
     }
 
-    return this.hunter(this.transferObservable(
-        Observable.merge(this.getObservable(TYPE_INTERNAL), this.getObservable(TYPE_EXTERNAL))))
+    return Observable.merge(this.getObservable(TYPE_INTERNAL), this.getObservable(TYPE_EXTERNAL))
+        .compose(TransformerFactory.applyCursorTransformer(GALLERY_PROJECTION))
+        .concatMap(new Func1<Observable<ImageEntity>, Observable<? extends T>>() {
+          @Override
+          public Observable<? extends T> call(Observable<ImageEntity> imageEntityObservable) {
+            return GalleryUseCase.this.hunter(imageEntityObservable);
+          }
+        })
         .compose(TransformerFactory.<T>applyTimeTransformer());
-  }
-
-  private Observable<ImageEntity> transferObservable(Observable<Cursor> cursorObservable) {
-    return cursorObservable.compose(
-        TransformerFactory.<Cursor, ImageEntity>applyCursorTransformer(GALLERY_PROJECTION));
   }
 
   private Observable<Cursor> getObservable(@Type final int type) {

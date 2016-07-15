@@ -35,9 +35,9 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
 
   //@formatter:off
   @Override protected Observable<Map<String, FolderEntity>> hunter(
-      Observable<ImageEntity> cursorObservable) {
+      Observable<ImageEntity> entityObservable) {
 
-    return cursorObservable.groupBy(new GroupByFunc())
+    return entityObservable.groupBy(new GroupByFunc())
         .concatMap(new ContactMapFunc(this.folderEntity, allPictures, folderListMap))
         .last()
         .map(new Func1<Map<String, FolderEntity>, Map<String, FolderEntity>>() {
@@ -50,7 +50,7 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
             allFolderEntity.setImageEntities(allPictures);
             entityMap.put((name != null && !name.isEmpty()) ? name : DEFAULT_NAME, allFolderEntity);
 
-                                       /*根据文件夹照片数量降序*/
+            /*根据文件夹照片数量降序*/
             Map<String, FolderEntity> folderEntityMap =
                 new TreeMap<>(new ValueComparator(entityMap));
             for (Map.Entry<String, FolderEntity> entry : folderListMap.entrySet()) {
@@ -62,8 +62,7 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
 
             return Collections.unmodifiableMap(folderEntityMap);
           }
-        })
-        .compose(IoScheduler.<Map<String, FolderEntity>>apply());
+        }).compose(IoScheduler.<Map<String, FolderEntity>>apply());
   }
 
   //@formatter:on
