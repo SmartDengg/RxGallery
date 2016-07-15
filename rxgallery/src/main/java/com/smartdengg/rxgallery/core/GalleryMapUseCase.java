@@ -33,9 +33,8 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
     return new GalleryMapUseCase(context, name);
   }
 
-  //@formatter:off
-  @Override protected Observable<Map<String, FolderEntity>> hunter(
-      Observable<ImageEntity> entityObservable) {
+  @Override
+  protected Observable<Map<String, FolderEntity>> hunter(Observable<ImageEntity> entityObservable) {
 
     return entityObservable.groupBy(new GroupByFunc())
         .concatMap(new ContactMapFunc(this.folderEntity, allPictures, folderListMap))
@@ -57,7 +56,6 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
               folderEntityMap.put(entry.getKey(), entry.getValue());
             }
 
-            //@formatter:on
             GalleryMapUseCase.this.folderListMap.clear();
 
             return Collections.unmodifiableMap(folderEntityMap);
@@ -65,7 +63,6 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
         }).compose(IoScheduler.<Map<String, FolderEntity>>apply());
   }
 
-  //@formatter:on
   private static final class GroupByFunc implements Func1<ImageEntity, String> {
 
     @Override public String call(ImageEntity imageEntity) {
@@ -117,7 +114,6 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
     }
   }
 
-  //@formatter:off
   private static final class ValueComparator implements Comparator<String> {
 
     Map<String, FolderEntity> base;
