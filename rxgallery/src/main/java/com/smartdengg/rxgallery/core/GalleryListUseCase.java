@@ -48,8 +48,8 @@ public class GalleryListUseCase extends GalleryUseCase<List<FolderEntity>> {
             clone.setFolderPath("");
             clone.setThumbPath(imageEntities.get(0).getImagePath());
             clone.setImageEntities(imageEntities);
-
             folderEntities.add(clone);
+
             Collections.sort(folderEntities, new ValueComparator());
 
             return folderEntities;

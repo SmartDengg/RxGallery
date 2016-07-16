@@ -14,8 +14,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.HashMap;
-import java.util.Map;
 import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func0;
@@ -59,7 +57,6 @@ abstract class GalleryUseCase<T> {
   final CursorLoader internalLoader;
   String name;
   FolderEntity folderEntity = new FolderEntity();
-  Map<String, FolderEntity> folderListMap = new HashMap<>();
   private Context context;
 
   /*package*/GalleryUseCase(Context context, String name) {
