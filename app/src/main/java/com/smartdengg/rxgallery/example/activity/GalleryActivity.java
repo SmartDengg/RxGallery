@@ -126,7 +126,7 @@ public class GalleryActivity extends AppCompatActivity {
       }
       galleryImageAdapter.updateItem(imageEntity);
 
-            /*设置数量*/
+      /*设置数量*/
       Integer size = selectedImageEntities.size();
       countTv.setText(size + "/" + MAX_COUNT);
       countTv.setTextColor((size == MAX_COUNT) ? Color.RED : Color.WHITE);
@@ -134,18 +134,17 @@ public class GalleryActivity extends AppCompatActivity {
   };
 
   private GalleryFolderAdapter.Callback folderCallback = new GalleryFolderAdapter.Callback() {
-    @Override public void onItemClick(WrapperFolderEntity folderEntity) {
+    @Override public void onItemClick(final WrapperFolderEntity folderEntity) {
 
       if (currentFolderEntity.equals(folderEntity)) {
         sheetDialog.dismiss();
         return;
       }
 
-      GalleryActivity.this.refreshData(folderEntity);
-
-      recyclerView.post(new Runnable() {
+      sheetDialog.dismiss();
+      sheetDialog.getWindow().getDecorView().post(new Runnable() {
         @Override public void run() {
-          sheetDialog.dismiss();
+          GalleryActivity.this.refreshData(folderEntity);
         }
       });
     }
@@ -324,18 +323,18 @@ public class GalleryActivity extends AppCompatActivity {
     }
     folderEntity.setImageEntities(imageEntities);
 
-         /*更新之前选中和当前选中文件夹状态*/
+    /*更新之前选中和当前选中文件夹状态*/
     currentFolderEntity.setChecked(false);
     folderEntity.setChecked(true);
     galleryFolderAdapter.updateItem(currentFolderEntity, folderEntity);
 
-        /*设置当前被选中文件夹*/
+    /*设置当前被选中文件夹*/
     currentFolderEntity = folderEntity;
 
-        /*刷新照片墙*/
+    /*刷新照片墙*/
     Observable.just(currentFolderEntity.getImageEntities()).subscribe(galleryImageAdapter);
 
-        /*更改文件夹提示*/
+    /*更改文件夹提示*/
     categoryBtn.setText(currentFolderEntity.getFolderName().toLowerCase());
   }
 

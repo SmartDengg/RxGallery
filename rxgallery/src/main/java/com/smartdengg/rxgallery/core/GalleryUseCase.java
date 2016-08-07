@@ -6,14 +6,9 @@ import android.content.CursorLoader;
 import android.database.Cursor;
 import android.os.Build;
 import android.provider.MediaStore;
-import android.support.annotation.IntDef;
 import com.smartdengg.rxgallery.Utils;
 import com.smartdengg.rxgallery.entity.FolderEntity;
 import com.smartdengg.rxgallery.entity.ImageEntity;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func0;
@@ -24,8 +19,6 @@ import rx.functions.Func1;
  */
 abstract class GalleryUseCase<T> {
 
-  private static final int TYPE_INTERNAL = 0;
-  private static final int TYPE_EXTERNAL = 1;
   static String[] GALLERY_PROJECTION;
   static String DEFAULT_NAME = "全部图片";
   private static Action1<Cursor> DISPOSE_ACTION = new Action1<Cursor>() {
@@ -72,7 +65,7 @@ abstract class GalleryUseCase<T> {
 
   public Observable<T> retrieveInternalGallery() {
 
-    return this.getObservable(TYPE_INTERNAL)
+    return this.getCursorObservable(Type.TYPE_INTERNAL)
         .compose(TransformerFactory.applyCursorTransformer(GALLERY_PROJECTION))
         .concatMap(new Func1<Observable<ImageEntity>, Observable<? extends T>>() {
           @Override
@@ -85,12 +78,11 @@ abstract class GalleryUseCase<T> {
 
   public Observable<T> retrieveExternalGallery() {
 
-    if (!Utils.hasPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-      throw new RuntimeException(
-          "missing permission: 'android.permission.READ_EXTERNAL_STORAGE' in your Manifest.xml");
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+      Utils.checkPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE);
     }
 
-    return this.getObservable(TYPE_EXTERNAL)
+    return this.getCursorObservable(Type.TYPE_EXTERNAL)
         .compose(TransformerFactory.applyCursorTransformer(GALLERY_PROJECTION))
         .concatMap(new Func1<Observable<ImageEntity>, Observable<? extends T>>() {
           @Override
@@ -103,12 +95,12 @@ abstract class GalleryUseCase<T> {
 
   public Observable<T> retrieveAllGallery() {
 
-    if (!Utils.hasPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-      throw new RuntimeException(
-          "miss 'android.permission.READ_EXTERNAL_STORAGE' in your Manifest.xml");
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+      Utils.checkPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE);
     }
 
-    return Observable.merge(this.getObservable(TYPE_INTERNAL), this.getObservable(TYPE_EXTERNAL))
+    return Observable.merge(this.getCursorObservable(Type.TYPE_INTERNAL),
+        this.getCursorObservable(Type.TYPE_EXTERNAL))
         .compose(TransformerFactory.applyCursorTransformer(GALLERY_PROJECTION))
         .concatMap(new Func1<Observable<ImageEntity>, Observable<? extends T>>() {
           @Override
@@ -119,7 +111,7 @@ abstract class GalleryUseCase<T> {
         .compose(TransformerFactory.<T>applyTimeTransformer());
   }
 
-  private Observable<Cursor> getObservable(@Type final int type) {
+  private Observable<Cursor> getCursorObservable(final Type type) {
 
     return Observable.defer(new Func0<Observable<Cursor>>() {
       @Override public Observable<Cursor> call() {
@@ -135,14 +127,16 @@ abstract class GalleryUseCase<T> {
 
             throw new IllegalStateException("Inner Exception");
           }
-        }, new CursorFactory(), DISPOSE_ACTION);
+        }, CursorFactory.created(), DISPOSE_ACTION);
       }
     });
   }
 
   protected abstract Observable<T> hunter(Observable<ImageEntity> cursorObservable);
 
-  @Retention(value = RetentionPolicy.CLASS) @Target(value = ElementType.PARAMETER)
-  @IntDef(value = { TYPE_INTERNAL, TYPE_EXTERNAL }) private @interface Type {
+  private enum Type {
+    TYPE_INTERNAL,
+
+    TYPE_EXTERNAL
   }
 }

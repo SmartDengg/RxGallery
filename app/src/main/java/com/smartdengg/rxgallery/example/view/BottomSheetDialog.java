@@ -94,9 +94,7 @@ public class BottomSheetDialog extends AppCompatDialog {
   }
 
   private boolean shouldWindowCloseOnTouchOutside() {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-      return true;
-    }
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return true;
     TypedValue value = new TypedValue();
     boolean b = this.context.getTheme()
         .resolveAttribute(android.R.attr.windowCloseOnTouchOutside, value, true);
