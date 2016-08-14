@@ -23,6 +23,8 @@ import com.smartdengg.rxgallery.entity.ImageEntity;
 import rx.Observable;
 import rx.Producer;
 import rx.Subscriber;
+import rx.exceptions.Exceptions;
+import rx.exceptions.OnErrorThrowable;
 import rx.plugins.RxJavaHooks;
 
 /**
@@ -74,12 +76,21 @@ public class OperatorMapCursorToEntity implements Observable.Operator<ImageEntit
 
       if (isUnsubscribed()) return;
 
-      ImageEntity result = this.convertToImageEntity(cursor);
+      ImageEntity result;
+
+      try {
+        result = this.convertToImageEntity(cursor);
+      } catch (Exception ex) {
+        Exceptions.throwIfFatal(ex);
+        unsubscribe();
+        onError(OnErrorThrowable.addValueAsLastCause(ex, cursor));
+        return;
+      }
+
       actual.onNext(result);
     }
 
-    @Override
-    public void setProducer(Producer p) {
+    @Override public void setProducer(Producer p) {
       actual.setProducer(p);
     }
 
