@@ -35,7 +35,6 @@ import com.smartdengg.rxgallery.entity.ImageEntity;
 import com.smartdengg.rxgallery.example.R;
 import com.smartdengg.rxgallery.example.adapter.GalleryFolderAdapter;
 import com.smartdengg.rxgallery.example.adapter.GalleryImageAdapter;
-import com.smartdengg.rxgallery.example.entity.WrapperFolderEntity;
 import com.smartdengg.rxgallery.example.utils.BestBlur;
 import com.smartdengg.rxgallery.example.view.BottomSheetDialog;
 import com.smartdengg.rxgallery.example.view.MarginDecoration;
@@ -77,9 +76,9 @@ public class GalleryActivity extends AppCompatActivity {
 
   /*SheetDialog 相关*/
   private BottomSheetDialog sheetDialog;
-  private List<WrapperFolderEntity> folderEntities = new ArrayList<>();
+  private List<FolderEntity> folderEntities = new ArrayList<>();
   private GalleryFolderAdapter galleryFolderAdapter;
-  private WrapperFolderEntity currentFolderEntity;
+  private FolderEntity currentFolderEntity;
 
   private Subscription subscription = Subscriptions.empty();
 
@@ -134,7 +133,7 @@ public class GalleryActivity extends AppCompatActivity {
   };
 
   private GalleryFolderAdapter.Callback folderCallback = new GalleryFolderAdapter.Callback() {
-    @Override public void onItemClick(final WrapperFolderEntity folderEntity) {
+    @Override public void onItemClick(final FolderEntity folderEntity) {
 
       if (currentFolderEntity.equals(folderEntity)) {
         sheetDialog.dismiss();
@@ -225,11 +224,6 @@ public class GalleryActivity extends AppCompatActivity {
 
     subscription = GalleryMapUseCase.createdUseCase(GalleryActivity.this)
         .retrieveAllGallery()
-        .takeFirst(new Func1<Map<String, FolderEntity>, Boolean>() {
-          @Override public Boolean call(Map<String, FolderEntity> stringFolderEntityMap) {
-            return !subscription.isUnsubscribed();
-          }
-        })
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Subscriber<Map<String, FolderEntity>>() {
           @Override public void onCompleted() {
@@ -247,7 +241,7 @@ public class GalleryActivity extends AppCompatActivity {
 
             for (Map.Entry<String, FolderEntity> entry : folderEntityMap.entrySet()) {
 
-              WrapperFolderEntity wrapperFolderEntity = new WrapperFolderEntity();
+              FolderEntity wrapperFolderEntity = new FolderEntity();
               wrapperFolderEntity.setFolderName(entry.getValue().getFolderName());
               wrapperFolderEntity.setFolderPath(entry.getValue().getFolderPath());
               wrapperFolderEntity.setThumbPath(entry.getValue().getThumbPath());
@@ -260,7 +254,7 @@ public class GalleryActivity extends AppCompatActivity {
             GalleryActivity.this.currentFolderEntity = GalleryActivity.this.folderEntities.get(0);
             currentFolderEntity.setChecked(true);
 
-                                                /*填充数据*/
+            /*填充数据*/
             Observable.just(currentFolderEntity.getImageEntities())
                 .subscribe(GalleryActivity.this.galleryImageAdapter);
           }
@@ -301,7 +295,7 @@ public class GalleryActivity extends AppCompatActivity {
     recyclerView.setHasFixedSize(true);
     recyclerView.addItemDecoration(new MarginDecoration(GalleryActivity.this));
     recyclerView.setAdapter(galleryFolderAdapter);
-        /*填充文件夹数据*/
+    /*填充文件夹数据*/
     Observable.just(folderEntities).subscribe(galleryFolderAdapter);
 
     sheetDialog = new BottomSheetDialog(GalleryActivity.this);
@@ -311,7 +305,7 @@ public class GalleryActivity extends AppCompatActivity {
     sheetDialog.setOnDismissListener(dismissListener);
   }
 
-  private void refreshData(WrapperFolderEntity folderEntity) {
+  private void refreshData(FolderEntity folderEntity) {
 
     List<ImageEntity> imageEntities = folderEntity.getImageEntities();
 

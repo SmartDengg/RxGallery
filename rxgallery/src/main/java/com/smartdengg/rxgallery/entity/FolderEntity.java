@@ -17,19 +17,25 @@
 
 package com.smartdengg.rxgallery.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by SmartDengg on 2016/3/5.
  */
-public class FolderEntity implements Cloneable, Comparable<FolderEntity> {
+public class FolderEntity implements Cloneable, Comparable<FolderEntity>, Parcelable {
 
   private String folderName = "";
   private String folderPath = "";
   private String thumbPath = "";
+  private boolean isChecked = false;
 
   private List<ImageEntity> imageEntities;
+
+  public FolderEntity() {
+  }
 
   public FolderEntity newInstance() {
     try {
@@ -82,6 +88,14 @@ public class FolderEntity implements Cloneable, Comparable<FolderEntity> {
     this.imageEntities.add(imageEntity);
   }
 
+  public boolean isChecked() {
+    return isChecked;
+  }
+
+  public void setChecked(boolean checked) {
+    this.isChecked = checked;
+  }
+
   @Override public boolean equals(Object o) {
 
     if (o == null || getClass() != o.getClass()) return false;
@@ -96,6 +110,7 @@ public class FolderEntity implements Cloneable, Comparable<FolderEntity> {
         "folderName='" + folderName + '\'' +
         ", folderPath='" + folderPath + '\'' +
         ", thumbPath='" + thumbPath + '\'' +
+        ", isChecked=" + isChecked +
         ", imageEntities=" + imageEntities +
         '}';
   }
@@ -109,4 +124,35 @@ public class FolderEntity implements Cloneable, Comparable<FolderEntity> {
       return -1;
     }
   }
+
+  @Override public int describeContents() {
+    return 0;
+  }
+
+  @Override public void writeToParcel(Parcel dest, int flags) {
+    dest.writeString(this.folderName);
+    dest.writeString(this.folderPath);
+    dest.writeString(this.thumbPath);
+    dest.writeByte(this.isChecked ? (byte) 1 : (byte) 0);
+    dest.writeTypedList(this.imageEntities);
+  }
+
+  protected FolderEntity(Parcel in) {
+    this.folderName = in.readString();
+    this.folderPath = in.readString();
+    this.thumbPath = in.readString();
+    this.isChecked = in.readByte() != 0;
+    this.imageEntities = in.createTypedArrayList(ImageEntity.CREATOR);
+  }
+
+  public static final Parcelable.Creator<FolderEntity> CREATOR =
+      new Parcelable.Creator<FolderEntity>() {
+        @Override public FolderEntity createFromParcel(Parcel source) {
+          return new FolderEntity(source);
+        }
+
+        @Override public FolderEntity[] newArray(int size) {
+          return new FolderEntity[size];
+        }
+      };
 }

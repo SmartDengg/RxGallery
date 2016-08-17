@@ -17,6 +17,7 @@
 
 package com.smartdengg.rxgallery.core;
 
+import android.util.Log;
 import rx.Observable;
 import rx.functions.Func1;
 import rx.schedulers.TimeInterval;
@@ -30,7 +31,7 @@ class TimeTransformer<T> implements Observable.Transformer<T, T> {
     return tObservable.timeInterval().map(new Func1<TimeInterval<T>, T>() {
       @Override public T call(TimeInterval<T> tTimeInterval) {
         long milliseconds = tTimeInterval.getIntervalInMilliseconds();
-        System.out.println(" \u21E2\u21E2\u21E2 RxGallery casts : " + milliseconds + "ms");
+        Log.d("RxGallery", " \u21E2\u21E2\u21E2 RxGallery casts : " + milliseconds);
         return tTimeInterval.getValue();
       }
     });

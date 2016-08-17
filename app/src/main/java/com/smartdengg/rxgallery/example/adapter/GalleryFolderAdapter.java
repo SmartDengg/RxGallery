@@ -12,8 +12,8 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.orhanobut.logger.Logger;
+import com.smartdengg.rxgallery.entity.FolderEntity;
 import com.smartdengg.rxgallery.example.R;
-import com.smartdengg.rxgallery.example.entity.WrapperFolderEntity;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import java.io.File;
@@ -26,10 +26,10 @@ import rx.functions.Action1;
  * Created by SmartDengg on 2016/3/5.
  */
 public class GalleryFolderAdapter extends RecyclerView.Adapter<GalleryFolderAdapter.ViewHolder>
-    implements Observer<List<WrapperFolderEntity>> {
+    implements Observer<List<FolderEntity>> {
 
   private Context context;
-  private List<WrapperFolderEntity> items;
+  private List<FolderEntity> items;
   private Callback callback;
 
   public GalleryFolderAdapter(Context context) {
@@ -44,7 +44,7 @@ public class GalleryFolderAdapter extends RecyclerView.Adapter<GalleryFolderAdap
   @SuppressLint("SetTextI18n") @Override
   public void onBindViewHolder(ViewHolder holder, final int position) {
 
-    WrapperFolderEntity entity = items.get(position);
+    FolderEntity entity = items.get(position);
 
     holder.nameTv.setText(entity.getFolderName());
     holder.countTv.setText(entity.getImageCount() + "");
@@ -85,11 +85,11 @@ public class GalleryFolderAdapter extends RecyclerView.Adapter<GalleryFolderAdap
     Logger.e(e.toString());
   }
 
-  @Override public void onNext(List<WrapperFolderEntity> galleryFolderEntities) {
+  @Override public void onNext(List<FolderEntity> galleryFolderEntities) {
     this.items = galleryFolderEntities;
   }
 
-  public void updateItem(WrapperFolderEntity oldEntity, WrapperFolderEntity newEntity) {
+  public void updateItem(FolderEntity oldEntity, FolderEntity newEntity) {
 
     int oldPosition = this.items.indexOf(oldEntity);
     this.items.set(oldPosition, oldEntity);
@@ -106,7 +106,7 @@ public class GalleryFolderAdapter extends RecyclerView.Adapter<GalleryFolderAdap
 
   public interface Callback {
 
-    void onItemClick(WrapperFolderEntity folderEntity);
+    void onItemClick(FolderEntity folderEntity);
   }
 
   public class ViewHolder extends RecyclerView.ViewHolder {
