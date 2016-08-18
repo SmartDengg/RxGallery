@@ -29,9 +29,7 @@ public class Utils {
     throw new IllegalStateException("No instance");
   }
 
-  public static void checkPermission(Context context, String permission) {
-    if (!(context.checkCallingOrSelfPermission(permission) == PackageManager.PERMISSION_GRANTED)) {
-      throw new RuntimeException("miss '" + permission + "' in your Manifest.xml");
-    }
+  public static boolean hasPermission(Context context, String permission) {
+    return (context.checkCallingOrSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
   }
 }

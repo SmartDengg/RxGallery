@@ -26,6 +26,7 @@ import android.provider.MediaStore;
 import com.smartdengg.rxgallery.Utils;
 import com.smartdengg.rxgallery.entity.FolderEntity;
 import com.smartdengg.rxgallery.entity.ImageEntity;
+import com.smartdengg.rxgallery.ui.TransparentActivity;
 import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func0;
@@ -95,9 +96,7 @@ abstract class GalleryUseCase<T> {
 
   public Observable<T> retrieveExternalGallery() {
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-      Utils.checkPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE);
-    }
+    if (this.hasReadExternalPermission()) return Observable.empty();
 
     return this.getCursorObservable(Type.TYPE_EXTERNAL)
         .compose(TransformerFactory.applyCursorTransformer(GALLERY_PROJECTION))
@@ -112,9 +111,7 @@ abstract class GalleryUseCase<T> {
 
   public Observable<T> retrieveAllGallery() {
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-      Utils.checkPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE);
-    }
+    if (!this.hasReadExternalPermission()) return Observable.empty();
 
     return Observable.merge(this.getCursorObservable(Type.TYPE_INTERNAL),
         this.getCursorObservable(Type.TYPE_EXTERNAL))
@@ -126,6 +123,16 @@ abstract class GalleryUseCase<T> {
           }
         })
         .compose(TransformerFactory.<T>applyTimeTransformer());
+  }
+
+  private boolean hasReadExternalPermission() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && !Utils.hasPermission(context,
+        Manifest.permission.READ_EXTERNAL_STORAGE)) {
+      TransparentActivity.navigateToTransparentActivity(context,
+          new String[] { Manifest.permission.READ_EXTERNAL_STORAGE });
+      return false;
+    }
+    return true;
   }
 
   private Observable<Cursor> getCursorObservable(final Type type) {
