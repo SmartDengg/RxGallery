@@ -8,6 +8,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import com.smartdengg.rxgallery.R;
 
 /**
  * 创建时间: 2016/08/18 11:41 <br>
@@ -52,7 +53,7 @@ import android.view.KeyEvent;
       }
     }
 
-    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.PermissionDialog);
     builder.setTitle("Grant permission")
         .setMessage("To use RxGallery feature you have to grant \""
             + stringBuilder.toString()

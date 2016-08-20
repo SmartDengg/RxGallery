@@ -126,6 +126,7 @@ abstract class GalleryUseCase<T> {
   }
 
   private boolean hasReadExternalPermission() {
+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && !Utils.hasPermission(context,
         Manifest.permission.READ_EXTERNAL_STORAGE)) {
       TransparentActivity.navigateToTransparentActivity(context,

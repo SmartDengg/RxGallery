@@ -6,6 +6,7 @@
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
+    <item name="android:windowAnimationStyle">@null</item>
   </style>
 
   <style name="AppTheme.HomeGreen">
@@ -24,7 +25,6 @@
     <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
   </style>
 
-  <!-- see http://blog.csdn.net/luohaowang320/article/details/42124225 -->
   <style name="ActivityAnimationStyle" parent="@android:style/Animation.Activity">
     <!-- 新Activity 进入 -->
     <item name="android:activityOpenEnterAnimation">@android:anim/fade_in</item>
