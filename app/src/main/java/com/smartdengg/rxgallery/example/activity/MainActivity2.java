@@ -160,7 +160,7 @@ public class MainActivity2 extends AppCompatActivity {
 
       long start = System.currentTimeMillis();
       //System.out.println("Start : " + start);
-            /*this will blocking*/
+      /*this will blocking*/
       T value = executor.execute();
       if (executor.isCanceled()) System.out.println("Canceled: " + value);
       long end = System.currentTimeMillis();
@@ -170,7 +170,7 @@ public class MainActivity2 extends AppCompatActivity {
         System.out.println("Value :   " + value + "  duration : " + (end - start));
         if (value.getClass().isAssignableFrom(Integer.class) && (Integer) value <= THRESHOLD) {/*如果小于'THRESHOLD'的话，重试*/
           System.out.println("----重试----");
-                    /*设置重试退避时间*/
+          /*设置重试退避时间*/
           delayAtomic.set((Integer) value);
           subscriber.onCompleted();
         }
