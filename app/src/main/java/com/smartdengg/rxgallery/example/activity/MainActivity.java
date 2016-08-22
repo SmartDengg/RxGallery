@@ -3,14 +3,9 @@ package com.smartdengg.rxgallery.example.activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.smartdengg.rxgallery.example.R;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
   @NonNull @OnClick(R.id.gallery_button) protected void onGalleryClick() {
     GalleryActivity.navigateToGallery(MainActivity.this);
 
-    ProcessBuilder processBuilder =
+    /*ProcessBuilder processBuilder =
         new ProcessBuilder("adb shell am start -W com.smartdengg.aopexapmle/.MainActivity");
     try {
       Process process = processBuilder.start();
@@ -40,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
       Log.d(TAG, string);
     } catch (IOException e) {
       e.printStackTrace();
-    }
+    }*/
   }
 
   @Override protected void onDestroy() {

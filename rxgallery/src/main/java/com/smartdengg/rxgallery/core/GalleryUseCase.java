@@ -96,7 +96,7 @@ abstract class GalleryUseCase<T> {
 
   public Observable<T> retrieveExternalGallery() {
 
-    if (this.hasReadExternalPermission()) return Observable.empty();
+    if (!this.hasReadExternalPermission()) return Observable.empty();
 
     return this.getCursorObservable(Type.TYPE_EXTERNAL)
         .compose(TransformerFactory.applyCursorTransformer(GALLERY_PROJECTION))
