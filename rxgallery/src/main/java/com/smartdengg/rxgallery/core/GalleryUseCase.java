@@ -157,7 +157,7 @@ abstract class GalleryUseCase<T> {
     });
   }
 
-  protected abstract Observable<T> hunter(Observable<ImageEntity> cursorObservable);
+  abstract Observable<T> hunter(Observable<ImageEntity> cursorObservable);
 
   private enum Type {
     TYPE_INTERNAL,
