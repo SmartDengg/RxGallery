@@ -161,7 +161,7 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
     void onItemClick(ImageEntity imageEntity);
   }
 
-  public class ViewHolder extends RecyclerView.ViewHolder {
+  static class ViewHolder extends RecyclerView.ViewHolder {
 
     @NonNull @Bind(R.id.gallery_image_item_thumb_iv) protected ImageView thumbIv;
 
