@@ -50,7 +50,7 @@ public class GalleryListUseCase extends GalleryUseCase<List<FolderEntity>> {
   }
 
   @Override
-  protected Observable<List<FolderEntity>> hunter(Observable<ImageEntity> entityObservable) {
+  public final Observable<List<FolderEntity>> hunt(Observable<ImageEntity> entityObservable) {
 
     return entityObservable.collect(new Func0<List<FolderEntity>>() {
       @Override public List<FolderEntity> call() {

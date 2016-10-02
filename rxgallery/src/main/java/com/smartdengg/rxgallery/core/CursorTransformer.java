@@ -46,17 +46,14 @@ class CursorTransformer implements Observable.Transformer<Cursor, Observable<Ima
         }
       };
 
-  private String[] galleryProjection;
-
-  public CursorTransformer(String[] galleryProjection) {
-    this.galleryProjection = galleryProjection;
+  CursorTransformer() {
   }
 
   @Override public Observable<Observable<ImageEntity>> call(Observable<Cursor> cursorObservable) {
 
     return cursorObservable.takeUntil(STOP_PREDICATE_FUNCTION)
         .onBackpressureBuffer()
-        .lift(new OperatorMapCursorToEntity(galleryProjection))
+        .lift(new OperatorMapCursorToEntity(GalleryUseCase.GALLERY_PROJECTION))
         .filter(FILTER_FUNCTION)
         .nest();
   }

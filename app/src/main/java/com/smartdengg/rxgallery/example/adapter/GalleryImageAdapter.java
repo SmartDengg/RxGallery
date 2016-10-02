@@ -73,7 +73,6 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
 
     String thumbUrl = entity.getImagePath();
     if (thumbUrl != null) {
-            /*Sorry for my poor english, but you must be careful of this file,because it may be load fail*/
       Picasso picasso = Picasso.with(context);
       //picasso.setIndicatorsEnabled(true);
       /**
@@ -157,15 +156,14 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
   }
 
   public interface Callback {
-
     void onItemClick(ImageEntity imageEntity);
   }
 
-  public class ViewHolder extends RecyclerView.ViewHolder {
+  static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @NonNull @Bind(R.id.gallery_image_item_thumb_iv) protected ImageView thumbIv;
+    @NonNull @Bind(R.id.gallery_image_item_thumb_iv) ImageView thumbIv;
 
-    public ViewHolder(View itemView) {
+    ViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(ViewHolder.this, itemView);
     }

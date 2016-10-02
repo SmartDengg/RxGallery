@@ -20,27 +20,27 @@ package com.smartdengg.rxgallery.core;
 import android.database.Cursor;
 import com.smartdengg.rxgallery.entity.ImageEntity;
 import rx.Observable;
+import rx.functions.Func1;
 
 /**
- * Created by Joker on 2016/6/28.
+ * Created by SmartDengg on 2016/10/2.
  */
-class TransformerFactory {
+class ResultTransformer<T> implements Observable.Transformer<Cursor, T> {
 
-  private TransformerFactory() {
-    throw new AssertionError("No instance");
+  private ImageHunter<T> imageHunter;
+
+  ResultTransformer(ImageHunter hunter) {
+    this.imageHunter = hunter;
   }
 
-  @SuppressWarnings("unchecked")
-  static Observable.Transformer<Cursor, Observable<ImageEntity>> applyCursorTransformer() {
-    return new CursorTransformer();
-  }
-
-  @SuppressWarnings("unchecked")
-  static <T> Observable.Transformer<Cursor, T> applyHunterTransformer(ImageHunter hunter) {
-    return (Observable.Transformer<Cursor, T>) new ResultTransformer<>(hunter);
-  }
-
-  @SuppressWarnings("unchecked") static <T> Observable.Transformer<T, T> applyTimeTransformer() {
-    return (Observable.Transformer<T, T>) new TimeTransformer<>();
+  @Override public Observable<T> call(Observable<Cursor> cursorObservable) {
+    return cursorObservable.compose(TransformerFactory.applyCursorTransformer())
+        .concatMap(new Func1<Observable<ImageEntity>, Observable<? extends T>>() {
+          @Override
+          public Observable<? extends T> call(Observable<ImageEntity> imageEntityObservable) {
+            return imageHunter.hunt(imageEntityObservable);
+          }
+        })
+        .compose(TransformerFactory.<T>applyTimeTransformer());
   }
 }

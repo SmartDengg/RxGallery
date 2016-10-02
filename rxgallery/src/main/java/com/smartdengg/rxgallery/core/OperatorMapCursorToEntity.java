@@ -30,11 +30,11 @@ import rx.plugins.RxJavaHooks;
 /**
  * Created by SmartDengg on 2016/7/12.
  */
-public class OperatorMapCursorToEntity implements Observable.Operator<ImageEntity, Cursor> {
+class OperatorMapCursorToEntity implements Observable.Operator<ImageEntity, Cursor> {
 
   private String[] galleryProjection;
 
-  public OperatorMapCursorToEntity(String[] galleryProjection) {
+  OperatorMapCursorToEntity(String[] galleryProjection) {
     this.galleryProjection = galleryProjection;
   }
 
@@ -52,7 +52,7 @@ public class OperatorMapCursorToEntity implements Observable.Operator<ImageEntit
     private Subscriber<? super ImageEntity> actual;
     boolean done;
 
-    public MapCursorSubscriber(Subscriber<? super ImageEntity> child, String[] galleryProjection) {
+    MapCursorSubscriber(Subscriber<? super ImageEntity> child, String[] galleryProjection) {
       this.actual = child;
       this.galleryProjection = galleryProjection;
     }

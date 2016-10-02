@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/material_4dp"
-    android:orientation="vertical"
->
-
-  <ImageView
-      android:id="@+id/gallery_item_iv"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:scaleType="center"
-      android:src="@drawable/holder"
-      android:background="@android:color/transparent"
-  />
-
-</LinearLayout>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@android:color/transparent"
+  android:scaleType="center"
+  android:src="@drawable/holder" />

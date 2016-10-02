@@ -29,10 +29,9 @@ public class GalleryPagerAdapter extends PagerAdapter implements Observer<List<I
 
   @Override public Object instantiateItem(ViewGroup container, int position) {
 
-    View page = LayoutInflater.from(context).inflate(R.layout.gallery_item, container, false);
+    ImageView imageView =
+        (ImageView) LayoutInflater.from(context).inflate(R.layout.gallery_item, container, false);
     //page.setBackgroundColor(Color.argb(255, position * 50, position * 10, position * 50));
-
-    ImageView imageView = (ImageView) page.findViewById(R.id.gallery_item_iv);
 
     String imagePath = this.items.get(position).getImagePath();
     Picasso.with(context)
@@ -46,9 +45,9 @@ public class GalleryPagerAdapter extends PagerAdapter implements Observer<List<I
         .tag(imagePath)
         .into(imageView);
 
-    container.addView(page);
+    container.addView(imageView);
 
-    return page;
+    return imageView;
   }
 
   @Override public int getCount() {

@@ -52,7 +52,7 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
   }
 
   @Override
-  protected Observable<Map<String, FolderEntity>> hunter(Observable<ImageEntity> entityObservable) {
+  public final Observable<Map<String, FolderEntity>> hunt(Observable<ImageEntity> entityObservable) {
 
     return entityObservable.groupBy(new GroupByFunc())
         .concatMap(new ContactMapFunc(this.folderEntity, this.allPictures))
@@ -107,7 +107,7 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
       return groupedObservable.map(new Func1<ImageEntity, Map<String, FolderEntity>>() {
         @Override public Map<String, FolderEntity> call(ImageEntity imageEntity) {
 
-                    /*All pictures*/
+          /*All pictures*/
           pictures.add(imageEntity);
 
           String key = groupedObservable.getKey();
