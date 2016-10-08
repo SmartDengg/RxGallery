@@ -67,7 +67,7 @@ public class GalleryListUseCase extends GalleryUseCase<List<FolderEntity>> {
             clone.setImageEntities(imageEntities);
             folderEntities.add(clone);
 
-            Collections.sort(folderEntities, new ValueComparator());
+            Collections.sort(folderEntities, new SortComparator());
 
             return folderEntities;
           }
@@ -80,7 +80,7 @@ public class GalleryListUseCase extends GalleryUseCase<List<FolderEntity>> {
     private FolderEntity folderEntity;
     private List<ImageEntity> imageEntities;
 
-    public CollectionAction(FolderEntity folderEntity, List<ImageEntity> imageEntities) {
+    private CollectionAction(FolderEntity folderEntity, List<ImageEntity> imageEntities) {
       this.folderEntity = folderEntity;
       this.imageEntities = imageEntities;
     }
@@ -104,15 +104,17 @@ public class GalleryListUseCase extends GalleryUseCase<List<FolderEntity>> {
     }
   }
 
-  private static final class ValueComparator implements Comparator<FolderEntity> {
+  private static final class SortComparator implements Comparator<FolderEntity> {
 
     @Override public int compare(FolderEntity lhs, FolderEntity rhs) {
 
       int lhsCount = lhs.getImageCount();
       int rhsCount = rhs.getImageCount();
 
-      return (lhsCount == rhsCount) ? lhs.getFolderName().compareTo(rhs.getFolderName())
-          : rhsCount - lhsCount;
+      return (lhsCount < rhsCount) ? -1 : ((lhsCount == rhsCount) ? 0 : 1);
+
+      /*return (lhsCount == rhsCount) ? lhs.getFolderName().compareTo(rhs.getFolderName())
+          : rhsCount - lhsCount;*/
     }
   }
 }

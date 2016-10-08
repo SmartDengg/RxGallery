@@ -68,7 +68,7 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
             entityMap.put((name != null && !name.isEmpty()) ? name : DEFAULT_NAME, allFolderEntity);
 
             /*根据文件夹照片数量降序*/
-            Map<String, FolderEntity> map = new TreeMap<>(new ValueComparator(entityMap));
+            Map<String, FolderEntity> map = new TreeMap<>(new SortComparator(entityMap));
             for (Map.Entry<String, FolderEntity> entry : entityMap.entrySet()) {
               map.put(entry.getKey(), entry.getValue());
             }
@@ -130,11 +130,11 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
     }
   }
 
-  private static final class ValueComparator implements Comparator<String> {
+  private static final class SortComparator implements Comparator<String> {
 
     Map<String, FolderEntity> base;
 
-    public ValueComparator(Map<String, FolderEntity> base) {
+    private SortComparator(Map<String, FolderEntity> base) {
       this.base = base;
     }
 
@@ -146,8 +146,10 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
       int lhsCount = lhsEntity.getImageCount();
       int rhsCount = rhsEntity.getImageCount();
 
-      return (lhsCount == rhsCount) ? rhsEntity.getFolderName().compareTo(lhsEntity.getFolderName())
-          : rhsCount - lhsCount;
+      return (lhsCount < rhsCount) ? -1 : ((lhsCount == rhsCount) ? 0 : 1);
+
+     /* return (lhsCount == rhsCount) ? rhsEntity.getFolderName().compareTo(lhsEntity.getFolderName())
+          : rhsCount - lhsCount;*/
     }
   }
 }

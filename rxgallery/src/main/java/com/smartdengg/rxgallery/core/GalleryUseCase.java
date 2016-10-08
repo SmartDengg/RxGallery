@@ -103,8 +103,7 @@ abstract class GalleryUseCase<T> implements ImageHunter<T> {
 
     if (!this.hasReadExternalPermission()) return Observable.empty();
 
-    return Observable.merge(createCursorObservable(TYPE_INTERNAL),
-        createCursorObservable(TYPE_EXTERNAL))
+    return Observable.merge(createCursorObservable(TYPE_INTERNAL), createCursorObservable(TYPE_EXTERNAL))
         .compose(TransformerFactory.<T>applyHunterTransformer(this));
   }
 
