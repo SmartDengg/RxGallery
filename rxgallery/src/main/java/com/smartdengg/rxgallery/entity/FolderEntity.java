@@ -32,6 +32,7 @@ public class FolderEntity implements Cloneable, Comparable<FolderEntity>, Parcel
   private String thumbPath = "";
   private boolean isChecked = false;
 
+
   private List<ImageEntity> imageEntities;
 
   public FolderEntity() {
