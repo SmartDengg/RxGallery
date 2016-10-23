@@ -11,15 +11,11 @@ def STETHO_LIBRARY_VERSION = "1.3.0"
 def RETROFIT_LIBRARY_VERSION = "2.0.1"
 def PICASSO_DOWNLOADER_LIBRARY_VERSION = "1.0.2"
 def ULTRAFIT_LIBRARY_VERSION = "0.5.0"
-def CYCLEVIEWPAGER_LIBRARY_VERSION = "0.0.2"
-def ANDFIX_LIBRARY_VERSION = "0.3.1@aar"
-def IM_LIBRARY_VERSION = "1.0.5.3-SNAPSHOT@aar"
 
 ext {
 
   VERSION_NAME = "1.0.0"
   variantRelease = false
-  httpLogTAG = "HTTP"
 
   android = [compileSdkVersion    : 23,
              buildToolsVersion    : "23.0.2",
@@ -55,13 +51,9 @@ ext {
       libRxDebounce        : "com.github.SmartDengg:RxDebounceClick:${RXDEBOUNCE_LIBRARY_VERSION}",
       libLogger            : "com.orhanobut:logger:${LOGGER_LIBRARY_VERSION}",
       libUltrafit          : "com.github.SmartDengg:Ultrafit:${ULTRAFIT_LIBRARY_VERSION}",
-      libCycleViewPager    : "com.github.RainbleNi:CycleViewPager:${CYCLEVIEWPAGER_LIBRARY_VERSION}",
 
       /*Hotfix Library*/
-      libAndfix            : "com.alipay.euler:andfix:${ANDFIX_LIBRARY_VERSION}",
-
-      /*Lianjia Library*/
-      libIMSDK             : "com.homelink:imsdk:${IM_LIBRARY_VERSION}",]
+      libAndfix            : "com.alipay.euler:andfix:${ANDFIX_LIBRARY_VERSION}",]
 
   debugDependencies = [
 
