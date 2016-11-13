@@ -51,10 +51,7 @@ ext {
       /*Third Library*/
       libRxDebounce        : "com.github.SmartDengg:RxDebounceClick:${RXDEBOUNCE_LIBRARY_VERSION}",
       libLogger            : "com.orhanobut:logger:${LOGGER_LIBRARY_VERSION}",
-      libUltrafit          : "com.github.SmartDengg:Ultrafit:${ULTRAFIT_LIBRARY_VERSION}",
-
-      /*Hotfix Library*/
-      libAndfix            : "com.alipay.euler:andfix:${ANDFIX_LIBRARY_VERSION}",]
+      libUltrafit          : "com.github.SmartDengg:Ultrafit:${ULTRAFIT_LIBRARY_VERSION}",]
 
   debugDependencies = [
 
