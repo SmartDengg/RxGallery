@@ -11,24 +11,8 @@ import com.squareup.picasso.Picasso;
 import okhttp3.OkHttpClient;
 
 /**
- * *   ┏┓　　　┏┓
- * ┏┛┻━━━┛┻┓
- * ┃　　　　　　　┃
- * ┃　　　━　　　┃
- * ┃　┳┛　┗┳　┃
- * ┃　　　　　　　┃
- * ┃　　　┻　　　┃
- * ┃　　　　　　　┃
- * ┗━┓　　　┏━┛
- * ┃　　　┃
- * ┃　　　┃
- * ┃　　　┗━━━┓
- * ┃　　　　　   ┣┓
- * ┃　　　　　   ┏┛
- * ┗┓┓┏━┳┓┏┛
- * ┃┫┫　┃┫┫
- * ┗┻┛　┗┻┛
- * Created by SmartDengg on 2016/3/4.
+ * 创建时间:  2016/10/27 12:09 <br>
+ * 作者:  SmartDengg <br>
  */
 public class MyApplication extends Application {
 
@@ -54,5 +38,9 @@ public class MyApplication extends Application {
         .setMethodOffset(0)
         .setMethodCount(4)
         .setLogLevel(LogLevel.FULL);
+  }
+
+  @Override public void onTerminate() {
+    super.onTerminate();
   }
 }

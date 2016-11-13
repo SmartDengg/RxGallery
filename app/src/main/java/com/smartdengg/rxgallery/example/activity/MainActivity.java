@@ -1,21 +1,30 @@
 package com.smartdengg.rxgallery.example.activity;
 
+import android.annotation.TargetApi;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Button;
-import butterknife.Bind;
+import android.util.Log;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.smartdengg.rxgallery.example.R;
-import rx.Subscription;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
   private static final String TAG = MainActivity.class.getSimpleName();
+  private String mCurrentPhotoPath;
 
-  @Bind(R.id.gallery_button) Button button;
-  private Subscription subscription;
+  //private Subscription subscription;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -80,13 +89,74 @@ public class MainActivity extends AppCompatActivity {
     } catch (IOException e) {
       e.printStackTrace();
     }*/
+  }
 
+  @NonNull @OnClick(R.id.take_button) protected void onTakeClick() {
+
+    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    try {
+      File imageFile = createImageFile();
+      mCurrentPhotoPath = imageFile.getAbsolutePath();
+      Log.d(TAG, "mCurrentPhotoPath = " + mCurrentPhotoPath);
+      takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    startActivityForResult(takePictureIntent, 1);
+  }
+
+  private File createImageFile() throws IOException {
+    // Create an image file name
+    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+    String imageFileName = "IMG_" + timeStamp + "_";
+    File albumF = getAlbumDir();
+    return File.createTempFile(imageFileName, ".jpg", albumF);
+  }
+
+  @TargetApi(Build.VERSION_CODES.FROYO) private File getAlbumDir() {
+    File storageDir = null;
+
+    if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+
+      //storageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "RxGallery");
+
+      storageDir =
+          new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+              "Rx-Gallery");
+
+      if (storageDir != null) {
+        if (!storageDir.mkdirs()) {
+          if (!storageDir.exists()) {
+            Log.d(TAG, "failed to create directory");
+            return null;
+          }
+        }
+      }
+    } else {
+      Log.v(getString(R.string.app_name), "External storage is not mounted READ/WRITE.");
+    }
+
+    return storageDir;
+  }
+
+  @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    flushPic();
+  }
+
+  private void flushPic() {
+    Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+    File f = new File(mCurrentPhotoPath);
+    Uri contentUri = Uri.fromFile(f);
+    mediaScanIntent.setData(contentUri);
+    this.sendBroadcast(mediaScanIntent);
   }
 
   @Override protected void onDestroy() {
     super.onDestroy();
 
-    subscription.unsubscribe();
+    //subscription.unsubscribe();
     ButterKnife.unbind(MainActivity.this);
   }
 }

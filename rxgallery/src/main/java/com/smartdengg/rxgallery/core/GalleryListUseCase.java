@@ -111,10 +111,7 @@ public class GalleryListUseCase extends GalleryUseCase<List<FolderEntity>> {
       int lhsCount = lhs.getImageCount();
       int rhsCount = rhs.getImageCount();
 
-      return (lhsCount < rhsCount) ? -1 : ((lhsCount == rhsCount) ? 0 : 1);
-
-      /*return (lhsCount == rhsCount) ? lhs.getFolderName().compareTo(rhs.getFolderName())
-          : rhsCount - lhsCount;*/
+      return (rhsCount < lhsCount) ? -1 : ((lhsCount == rhsCount) ? 0 : 1);
     }
   }
 }

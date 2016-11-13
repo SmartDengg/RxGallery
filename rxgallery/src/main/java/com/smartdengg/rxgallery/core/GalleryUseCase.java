@@ -21,8 +21,12 @@ import android.Manifest;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.database.Cursor;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import com.smartdengg.rxgallery.Utils;
 import com.smartdengg.rxgallery.entity.FolderEntity;
 import com.smartdengg.rxgallery.ui.TransparentActivity;
@@ -84,6 +88,19 @@ abstract class GalleryUseCase<T> implements ImageHunter<T> {
     this.internalLoader =
         new CursorLoader(context, MediaStore.Images.Media.INTERNAL_CONTENT_URI, GALLERY_PROJECTION,
             null, null, GALLERY_PROJECTION[2] + " DESC");
+
+    //this.context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+    //    Uri.parse("file://" + Environment.getExternalStorageDirectory())));
+    MediaScannerConnection.scanFile(context,
+        new String[] { Environment.getExternalStorageDirectory().getAbsolutePath() }, null,
+        new MediaScannerConnection.OnScanCompletedListener() {
+
+          @Override public void onScanCompleted(String path, Uri uri) {
+
+            Log.d("gallery", "uri" + uri.toString());
+            Log.d("gallery", "path" + path);
+          }
+        });
   }
 
   public Observable<T> retrieveInternalGallery() {
@@ -103,7 +120,8 @@ abstract class GalleryUseCase<T> implements ImageHunter<T> {
 
     if (!this.hasReadExternalPermission()) return Observable.empty();
 
-    return Observable.merge(createCursorObservable(TYPE_INTERNAL), createCursorObservable(TYPE_EXTERNAL))
+    return Observable.merge(createCursorObservable(TYPE_INTERNAL),
+        createCursorObservable(TYPE_EXTERNAL))
         .compose(TransformerFactory.<T>applyHunterTransformer(this));
   }
 

@@ -4,7 +4,12 @@ apply plugin: 'com.github.dcendents.android-maven'
 group = 'com.github.SmartDengg'
 
 def STRING = "String"
-def LIBRARY_VERSION = "LIBRARY_VERSION"
+def INTEGER = "int"
+def LIBRARY_VERSION_NAME = "LIBRARY_VERSION_NAME"
+def LIBRARY_VERSION_CODE = "LIBRARY_VERSION_CODE"
+
+def LIBRARY_VERSION_NAME_VALUE = "1.0.0"
+def LIBRARY_VERSION_CODE_VALUE = 1000000
 
 android {
 
@@ -17,8 +22,10 @@ android {
     versionCode rootProject.ext.android.versionCode
     versionName rootProject.ext.android.versionName
 
-    buildConfigField STRING, LIBRARY_VERSION, "\"${rootProject.ext.VERSION_NAME}\""
+    buildConfigField STRING, LIBRARY_VERSION_NAME, "\"${LIBRARY_VERSION_NAME_VALUE}\""
+    buildConfigField INTEGER, LIBRARY_VERSION_CODE, "${LIBRARY_VERSION_CODE_VALUE}"
   }
+
   buildTypes {
     release {
       minifyEnabled false

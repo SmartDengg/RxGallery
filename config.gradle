@@ -15,10 +15,11 @@ def ULTRAFIT_LIBRARY_VERSION = "0.5.0"
 ext {
 
   VERSION_NAME = "1.0.0"
+  VERSION_CODE = 1000000
   variantRelease = false
 
-  android = [compileSdkVersion    : 23,
-             buildToolsVersion    : "23.0.2",
+  android = [compileSdkVersion    : 24,
+             buildToolsVersion    : "24.0.2",
              applicationId        : "com.smartdengg.rxgallery.example",
              minSdkVersion        : 14,
              targetSdkVersion     : 23,

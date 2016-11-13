@@ -51,8 +51,8 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
     return new GalleryMapUseCase(context, name);
   }
 
-  @Override
-  public final Observable<Map<String, FolderEntity>> hunt(Observable<ImageEntity> entityObservable) {
+  @Override public final Observable<Map<String, FolderEntity>> hunt(
+      Observable<ImageEntity> entityObservable) {
 
     return entityObservable.groupBy(new GroupByFunc())
         .concatMap(new ContactMapFunc(this.folderEntity, this.allPictures))
@@ -146,10 +146,7 @@ public class GalleryMapUseCase extends GalleryUseCase<Map<String, FolderEntity>>
       int lhsCount = lhsEntity.getImageCount();
       int rhsCount = rhsEntity.getImageCount();
 
-      return (lhsCount < rhsCount) ? -1 : ((lhsCount == rhsCount) ? 0 : 1);
-
-     /* return (lhsCount == rhsCount) ? rhsEntity.getFolderName().compareTo(lhsEntity.getFolderName())
-          : rhsCount - lhsCount;*/
+      return (rhsCount < lhsCount) ? -1 : ((lhsCount == rhsCount) ? 0 : 1);
     }
   }
 }
