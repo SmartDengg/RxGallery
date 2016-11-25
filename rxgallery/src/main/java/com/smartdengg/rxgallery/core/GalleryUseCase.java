@@ -65,7 +65,7 @@ abstract class GalleryUseCase<T> implements ImageHunter<T> {
     }
   }
 
-  private static class CursorCloseHolder {
+  private static class CursorCloseHelper {
     private static final Action1<Cursor> DISPOSE_ACTION = new Action1<Cursor>() {
       @Override public void call(Cursor cursor) {
         if (!cursor.isClosed()) cursor.close();
@@ -138,7 +138,7 @@ abstract class GalleryUseCase<T> implements ImageHunter<T> {
   private Observable<Cursor> createCursorObservable(final Type type) {
     return Observable.create(
         SyncOnSubscribe.createStateful(new CursorGeneratorHelper(type), CursorFactory.created(),
-            CursorCloseHolder.DISPOSE_ACTION));
+            CursorCloseHelper.DISPOSE_ACTION));
   }
 
   private class CursorGeneratorHelper implements Func0<Cursor> {

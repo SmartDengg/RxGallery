@@ -42,7 +42,7 @@ class CursorTransformer implements Observable.Transformer<Cursor, Observable<Ima
           File file = new File(imageEntity.getImagePath());
           File parentFile = file.getParentFile();
 
-          return file.exists() && parentFile != null;
+          return file.exists() && file.canRead() && parentFile != null;
         }
       };
 

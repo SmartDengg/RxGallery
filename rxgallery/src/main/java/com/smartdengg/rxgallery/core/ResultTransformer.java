@@ -29,7 +29,7 @@ class ResultTransformer<T> implements Observable.Transformer<Cursor, T> {
 
   private ImageHunter<T> imageHunter;
 
-  ResultTransformer(ImageHunter hunter) {
+  ResultTransformer(ImageHunter<T> hunter) {
     this.imageHunter = hunter;
   }
 

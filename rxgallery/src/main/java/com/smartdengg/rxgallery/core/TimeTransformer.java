@@ -27,8 +27,8 @@ import rx.schedulers.TimeInterval;
  */
 class TimeTransformer<T> implements Observable.Transformer<T, T> {
 
-  @Override public Observable<T> call(Observable<T> tObservable) {
-    return tObservable.timeInterval().map(new Func1<TimeInterval<T>, T>() {
+  @Override public Observable<T> call(Observable<T> observable) {
+    return observable.timeInterval().map(new Func1<TimeInterval<T>, T>() {
       @Override public T call(TimeInterval<T> tTimeInterval) {
         long milliseconds = tTimeInterval.getIntervalInMilliseconds();
         Log.d("RxGallery", " \u21E2\u21E2\u21E2 RxGallery casts : " + milliseconds);

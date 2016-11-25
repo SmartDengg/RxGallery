@@ -27,7 +27,7 @@ import rx.Observable;
 class TransformerFactory {
 
   private TransformerFactory() {
-    throw new AssertionError("No instance");
+    throw new AssertionError("No instance!");
   }
 
   @SuppressWarnings("unchecked")
