@@ -137,7 +137,7 @@ abstract class GalleryUseCase<T> implements ImageHunter<T> {
 
   private Observable<Cursor> createCursorObservable(final Type type) {
     return Observable.create(
-        SyncOnSubscribe.createStateful(new CursorGeneratorHelper(type), CursorFactory.created(),
+        SyncOnSubscribe.createStateful(new CursorGeneratorHelper(type), CursorFactory.create(),
             CursorCloseHelper.DISPOSE_ACTION));
   }
 

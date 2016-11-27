@@ -30,7 +30,7 @@ class CursorFactory implements Func2<Cursor, Observer<? super Cursor>, Cursor> {
   private CursorFactory() {
   }
 
-  public static CursorFactory created() {
+  static CursorFactory create() {
     return new CursorFactory();
   }
 

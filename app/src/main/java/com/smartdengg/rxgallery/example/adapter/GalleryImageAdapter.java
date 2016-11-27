@@ -76,7 +76,7 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
       Picasso picasso = Picasso.with(context);
       //picasso.setIndicatorsEnabled(true);
       /**
-       * D/Picasso﹕ Main        created      [R0] Request{http://i.imgur.com/rT5vXE1.jpg}
+       * D/Picasso﹕ Main        create      [R0] Request{http://i.imgur.com/rT5vXE1.jpg}
        * D/Picasso﹕ Dispatcher  enqueued     [R0]+21ms
        * D/Picasso﹕ Hunter      executing    [R0]+26ms
        * D/Picasso﹕ Hunter      decoded      [R0]+575ms
