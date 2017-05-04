@@ -15,11 +15,12 @@
  *
  */
 
-package com.smartdengg.rxgallery.entity;
+package com.smartdengg.rxgallery.core;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,26 +33,20 @@ public class FolderEntity implements Cloneable, Comparable<FolderEntity>, Parcel
   private String thumbPath = "";
   private boolean isChecked = false;
 
-
   private List<ImageEntity> imageEntities;
 
-  public FolderEntity() {
+  static FolderEntity newInstance() {
+    return new FolderEntity();
   }
 
-  public FolderEntity newInstance() {
-    try {
-      return (FolderEntity) super.clone();
-    } catch (CloneNotSupportedException e) {
-      e.printStackTrace();
-    }
-    return new FolderEntity();
+  private FolderEntity() {
   }
 
   public String getFolderName() {
     return folderName;
   }
 
-  public void setFolderName(String folderName) {
+  void setFolderName(String folderName) {
     this.folderName = folderName;
   }
 
@@ -59,7 +54,7 @@ public class FolderEntity implements Cloneable, Comparable<FolderEntity>, Parcel
     return folderPath;
   }
 
-  public void setFolderPath(String folderPath) {
+  void setFolderPath(String folderPath) {
     this.folderPath = folderPath;
   }
 
@@ -67,7 +62,7 @@ public class FolderEntity implements Cloneable, Comparable<FolderEntity>, Parcel
     return thumbPath;
   }
 
-  public void setThumbPath(String thumbPath) {
+  void setThumbPath(String thumbPath) {
     this.thumbPath = thumbPath;
   }
 
@@ -76,15 +71,14 @@ public class FolderEntity implements Cloneable, Comparable<FolderEntity>, Parcel
   }
 
   public List<ImageEntity> getImageEntities() {
-    return imageEntities;
+    return Collections.unmodifiableList(imageEntities);
   }
 
-  public void setImageEntities(List<ImageEntity> imageEntities) {
+  void setImageEntities(List<ImageEntity> imageEntities) {
     this.imageEntities = imageEntities;
   }
 
-  public void addImage(ImageEntity imageEntity) {
-
+  void addImage(ImageEntity imageEntity) {
     if (this.imageEntities == null) this.imageEntities = new ArrayList<>();
     this.imageEntities.add(imageEntity);
   }
@@ -116,7 +110,7 @@ public class FolderEntity implements Cloneable, Comparable<FolderEntity>, Parcel
         '}';
   }
 
-  @SuppressWarnings("all") @Override public int compareTo(FolderEntity another) {
+  @Override public int compareTo(FolderEntity another) {
     if (another == null) throw new NullPointerException("another == null");
 
     if (this.getImageEntities().size() - another.getImageEntities().size() >= 0) {

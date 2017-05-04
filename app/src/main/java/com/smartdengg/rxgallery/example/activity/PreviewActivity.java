@@ -13,7 +13,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import com.smartdengg.rxgallery.entity.ImageEntity;
+import com.smartdengg.rxgallery.core.ImageEntity;
 import com.smartdengg.rxgallery.example.R;
 import com.smartdengg.rxgallery.example.adapter.GalleryPagerAdapter;
 import com.smartdengg.rxgallery.example.view.ScaleTransformer;

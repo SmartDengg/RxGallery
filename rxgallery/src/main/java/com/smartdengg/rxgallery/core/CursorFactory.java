@@ -23,7 +23,9 @@ import rx.exceptions.Exceptions;
 import rx.functions.Func2;
 
 /**
- * Created by Joker on 2016/6/27.
+ * 创建时间:  2017/01/30 16:27 <br>
+ * 作者:  dengwei <br>
+ * 描述:
  */
 class CursorFactory implements Func2<Cursor, Observer<? super Cursor>, Cursor> {
 
@@ -58,9 +60,9 @@ class CursorFactory implements Func2<Cursor, Observer<? super Cursor>, Cursor> {
   }*/
 
   @Override public Cursor call(Cursor cursor, Observer<? super Cursor> observer) {
-    if (!cursor.isClosed() && cursor.moveToNext()) {
+    if (hasNext(cursor)) {
       try {
-        /** exclude .gif */
+        /*exclude ".gif" file*/
         if (!cursor.getString(cursor.getColumnIndexOrThrow(GalleryUseCase.GALLERY_PROJECTION[0]))
             .endsWith(".gif")) {
           observer.onNext(cursor);
@@ -74,5 +76,9 @@ class CursorFactory implements Func2<Cursor, Observer<? super Cursor>, Cursor> {
     }
 
     return cursor;
+  }
+
+  private static boolean hasNext(Cursor cursor) {
+    return !cursor.isClosed() && !cursor.isLast() && cursor.moveToNext();
   }
 }

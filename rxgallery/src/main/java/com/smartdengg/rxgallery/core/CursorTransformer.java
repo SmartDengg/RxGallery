@@ -18,13 +18,14 @@
 package com.smartdengg.rxgallery.core;
 
 import android.database.Cursor;
-import com.smartdengg.rxgallery.entity.ImageEntity;
 import java.io.File;
 import rx.Observable;
 import rx.functions.Func1;
 
 /**
- * Created by Joker on 2016/6/28.
+ * 创建时间:  2017/01/30 17:30 <br>
+ * 作者:  Joker <br>
+ * 描述:
  */
 class CursorTransformer implements Observable.Transformer<Cursor, Observable<ImageEntity>> {
 
@@ -38,11 +39,8 @@ class CursorTransformer implements Observable.Transformer<Cursor, Observable<Ima
   private static final Func1<ImageEntity, Boolean> FILTER_FUNCTION =
       new Func1<ImageEntity, Boolean>() {
         @Override public Boolean call(ImageEntity imageEntity) {
-          /*校验文件是否存在*/
           File file = new File(imageEntity.getImagePath());
-          File parentFile = file.getParentFile();
-
-          return file.exists() && file.canRead() && parentFile != null;
+          return file.exists() && file.canRead() && file.getParentFile() != null;
         }
       };
 
@@ -52,7 +50,6 @@ class CursorTransformer implements Observable.Transformer<Cursor, Observable<Ima
   @Override public Observable<Observable<ImageEntity>> call(Observable<Cursor> cursorObservable) {
 
     return cursorObservable.takeUntil(STOP_PREDICATE_FUNCTION)
-        .onBackpressureBuffer()
         .lift(new OperatorMapCursorToEntity(GalleryUseCase.GALLERY_PROJECTION))
         .filter(FILTER_FUNCTION)
         .nest();

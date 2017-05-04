@@ -18,11 +18,12 @@
 package com.smartdengg.rxgallery.core;
 
 import android.database.Cursor;
-import com.smartdengg.rxgallery.entity.ImageEntity;
 import rx.Observable;
 
 /**
- * Created by Joker on 2016/6/28.
+ * 创建时间:  2017/01/30 17:30 <br>
+ * 作者:  Joker <br>
+ * 描述:
  */
 class TransformerFactory {
 
@@ -30,14 +31,16 @@ class TransformerFactory {
     throw new AssertionError("No instance!");
   }
 
-  @SuppressWarnings("unchecked")
-  static Observable.Transformer<Cursor, Observable<ImageEntity>> applyCursorTransformer() {
-    return new CursorTransformer();
-  }
+
 
   @SuppressWarnings("unchecked")
   static <T> Observable.Transformer<Cursor, T> applyHunterTransformer(ImageHunter hunter) {
     return (Observable.Transformer<Cursor, T>) new ResultTransformer<>(hunter);
+  }
+
+  @SuppressWarnings("unchecked")
+  static Observable.Transformer<Cursor, Observable<ImageEntity>> applyCursorTransformer() {
+    return new CursorTransformer();
   }
 
   @SuppressWarnings("unchecked") static <T> Observable.Transformer<T, T> applyTimeTransformer() {

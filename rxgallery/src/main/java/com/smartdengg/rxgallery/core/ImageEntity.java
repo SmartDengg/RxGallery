@@ -15,7 +15,7 @@
  *
  */
 
-package com.smartdengg.rxgallery.entity;
+package com.smartdengg.rxgallery.core;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -46,9 +46,6 @@ public class ImageEntity implements Cloneable, Parcelable {
   private long modifyDate;
   private boolean isChecked = false;
 
-  public ImageEntity() {
-  }
-
   protected ImageEntity(Parcel in) {
     this.imagePath = in.readString();
     this.imageName = in.readString();
@@ -63,13 +60,10 @@ public class ImageEntity implements Cloneable, Parcelable {
     this.isChecked = in.readByte() != 0;
   }
 
-  public ImageEntity newInstance() {
+  private ImageEntity() {
+  }
 
-    try {
-      return (ImageEntity) super.clone();
-    } catch (CloneNotSupportedException e) {
-      e.printStackTrace();
-    }
+  static ImageEntity newInstance() {
     return new ImageEntity();
   }
 
@@ -77,7 +71,7 @@ public class ImageEntity implements Cloneable, Parcelable {
     return imagePath;
   }
 
-  public void setImagePath(String imagePath) {
+  void setImagePath(String imagePath) {
     this.imagePath = imagePath;
   }
 
@@ -85,7 +79,7 @@ public class ImageEntity implements Cloneable, Parcelable {
     return imageName;
   }
 
-  public void setImageName(String imageName) {
+  void setImageName(String imageName) {
     this.imageName = imageName;
   }
 
@@ -93,7 +87,7 @@ public class ImageEntity implements Cloneable, Parcelable {
     return id;
   }
 
-  public void setId(long id) {
+  void setId(long id) {
     this.id = id;
   }
 
@@ -101,7 +95,7 @@ public class ImageEntity implements Cloneable, Parcelable {
     return addDate;
   }
 
-  public void setAddDate(long addDate) {
+  void setAddDate(long addDate) {
     this.addDate = addDate;
   }
 
@@ -109,7 +103,7 @@ public class ImageEntity implements Cloneable, Parcelable {
     return title;
   }
 
-  public void setTitle(String title) {
+  void setTitle(String title) {
     this.title = title;
   }
 
@@ -117,7 +111,7 @@ public class ImageEntity implements Cloneable, Parcelable {
     return mimeType;
   }
 
-  public void setMimeType(String mimeType) {
+  void setMimeType(String mimeType) {
     this.mimeType = mimeType;
   }
 
@@ -125,7 +119,7 @@ public class ImageEntity implements Cloneable, Parcelable {
     return width;
   }
 
-  public void setWidth(String width) {
+  void setWidth(String width) {
     this.width = width;
   }
 
@@ -133,7 +127,7 @@ public class ImageEntity implements Cloneable, Parcelable {
     return height;
   }
 
-  public void setHeight(String height) {
+  void setHeight(String height) {
     this.height = height;
   }
 
@@ -141,7 +135,7 @@ public class ImageEntity implements Cloneable, Parcelable {
     return size;
   }
 
-  public void setSize(long size) {
+  void setSize(long size) {
     this.size = size;
   }
 
@@ -149,7 +143,7 @@ public class ImageEntity implements Cloneable, Parcelable {
     return modifyDate;
   }
 
-  public void setModifyDate(long modifyDate) {
+  void setModifyDate(long modifyDate) {
     this.modifyDate = modifyDate;
   }
 

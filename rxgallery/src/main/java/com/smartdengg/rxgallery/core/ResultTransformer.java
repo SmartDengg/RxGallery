@@ -18,12 +18,14 @@
 package com.smartdengg.rxgallery.core;
 
 import android.database.Cursor;
-import com.smartdengg.rxgallery.entity.ImageEntity;
 import rx.Observable;
+import rx.Subscriber;
 import rx.functions.Func1;
 
 /**
- * Created by SmartDengg on 2016/10/2.
+ * 创建时间:  2017/01/30 17:32 <br>
+ * 作者:  SmartDengg <br>
+ * 描述:
  */
 class ResultTransformer<T> implements Observable.Transformer<Cursor, T> {
 

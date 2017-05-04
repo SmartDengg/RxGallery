@@ -17,34 +17,28 @@
 
 package com.smartdengg.rxgallery.core;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.database.Cursor;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
-import com.smartdengg.rxgallery.Utils;
-import com.smartdengg.rxgallery.entity.FolderEntity;
-import com.smartdengg.rxgallery.ui.TransparentActivity;
 import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func0;
 import rx.observables.SyncOnSubscribe;
 
+import static com.smartdengg.rxgallery.Utils.hasReadExternalPermission;
 import static com.smartdengg.rxgallery.core.GalleryUseCase.Type.TYPE_EXTERNAL;
 import static com.smartdengg.rxgallery.core.GalleryUseCase.Type.TYPE_INTERNAL;
 
 /**
- * Created by SmartDengg on 2016/3/5.
+ * 创建时间:  2017/01/30 16:21 <br>
+ * 作者:  SmartDengg <br>
+ * 描述:
  */
 abstract class GalleryUseCase<T> implements ImageHunter<T> {
 
   static String[] GALLERY_PROJECTION;
-  static String DEFAULT_NAME = "全部图片";
 
   static {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -65,80 +59,81 @@ abstract class GalleryUseCase<T> implements ImageHunter<T> {
     }
   }
 
-  private static class CursorCloseHelper {
-    private static final Action1<Cursor> DISPOSE_ACTION = new Action1<Cursor>() {
+  private static class CursorDisposeHelper {
+
+    private static Action1<Cursor> createAction(CursorLoader cursorLoader) {
+      return new DisposeAction(cursorLoader);
+    }
+
+    private static class DisposeAction implements Action1<Cursor> {
+
+      private CursorLoader cursorLoader;
+
+      private DisposeAction(CursorLoader cursorLoader) {
+        this.cursorLoader = cursorLoader;
+      }
+
       @Override public void call(Cursor cursor) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+          cursorLoader.cancelLoadInBackground();
+        }
         if (!cursor.isClosed()) cursor.close();
       }
-    };
+    }
   }
 
-  private final CursorLoader externalLoader;
-  private final CursorLoader internalLoader;
-  String name;
-  FolderEntity folderEntity = new FolderEntity();
   private Context context;
+  private final CursorLoader internalLoader;
+  private final CursorLoader externalLoader;
 
-  /*package*/GalleryUseCase(Context context, String name) {
+  /*package*/GalleryUseCase(Context context) {
     this.context = context;
-    this.name = name;
-    this.externalLoader =
-        new CursorLoader(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, GALLERY_PROJECTION,
-            null, null, GALLERY_PROJECTION[2] + " DESC");
     this.internalLoader =
         new CursorLoader(context, MediaStore.Images.Media.INTERNAL_CONTENT_URI, GALLERY_PROJECTION,
+            null, null, GALLERY_PROJECTION[2] + " DESC");
+    this.externalLoader =
+        new CursorLoader(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, GALLERY_PROJECTION,
             null, null, GALLERY_PROJECTION[2] + " DESC");
 
     //this.context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
     //    Uri.parse("file://" + Environment.getExternalStorageDirectory())));
-    MediaScannerConnection.scanFile(context,
-        new String[] { Environment.getExternalStorageDirectory().getAbsolutePath() }, null,
-        new MediaScannerConnection.OnScanCompletedListener() {
-
-          @Override public void onScanCompleted(String path, Uri uri) {
-
-            Log.d("gallery", "uri" + uri.toString());
-            Log.d("gallery", "path" + path);
-          }
-        });
+    //MediaScannerConnection.scanFile(context,
+    //    new String[] { Environment.getExternalStorageDirectory().getAbsolutePath() }, null,
+    //    new MediaScannerConnection.OnScanCompletedListener() {
+    //
+    //      @Override public void onScanCompleted(String path, Uri uri) {
+    //        Log.d("gallery", "uri" + uri.toString());
+    //        Log.d("gallery", "path" + path);
+    //      }
+    //    });
   }
 
-  public Observable<T> retrieveInternalGallery() {
-    return this.createCursorObservable(TYPE_INTERNAL)
+  public Observable<T> scanInternalGallery() {
+    return createCursorObservable(TYPE_INTERNAL, internalLoader).compose(
+        TransformerFactory.<T>applyHunterTransformer(this));
+  }
+
+  public Observable<T> scanExternalGallery() {
+
+    if (!hasReadExternalPermission(context)) return Observable.empty();
+
+    return createCursorObservable(TYPE_EXTERNAL, internalLoader).compose(
+        TransformerFactory.<T>applyHunterTransformer(this));
+  }
+
+  public Observable<T> scanAllGallery() {
+
+    if (!hasReadExternalPermission(context)) return Observable.empty();
+
+    return Observable.merge(createCursorObservable(TYPE_INTERNAL, internalLoader),
+        createCursorObservable(TYPE_EXTERNAL, externalLoader))
         .compose(TransformerFactory.<T>applyHunterTransformer(this));
   }
 
-  public Observable<T> retrieveExternalGallery() {
-
-    if (!this.hasReadExternalPermission()) return Observable.empty();
-
-    return this.createCursorObservable(TYPE_EXTERNAL)
-        .compose(TransformerFactory.<T>applyHunterTransformer(this));
-  }
-
-  public Observable<T> retrieveAllGallery() {
-
-    if (!this.hasReadExternalPermission()) return Observable.empty();
-
-    return Observable.merge(createCursorObservable(TYPE_INTERNAL),
-        createCursorObservable(TYPE_EXTERNAL))
-        .compose(TransformerFactory.<T>applyHunterTransformer(this));
-  }
-
-  private boolean hasReadExternalPermission() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && !Utils.hasPermission(context,
-        Manifest.permission.READ_EXTERNAL_STORAGE)) {
-      TransparentActivity.navigateToTransparentActivity(context,
-          new String[] { Manifest.permission.READ_EXTERNAL_STORAGE });
-      return false;
-    }
-    return true;
-  }
-
-  private Observable<Cursor> createCursorObservable(final Type type) {
+  private Observable<Cursor> createCursorObservable(final Type type, CursorLoader cursorLoader) {
     return Observable.create(
         SyncOnSubscribe.createStateful(new CursorGeneratorHelper(type), CursorFactory.create(),
-            CursorCloseHelper.DISPOSE_ACTION));
+            CursorDisposeHelper.createAction(cursorLoader)));
   }
 
   private class CursorGeneratorHelper implements Func0<Cursor> {

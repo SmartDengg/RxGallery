@@ -12,7 +12,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.orhanobut.logger.Logger;
-import com.smartdengg.rxgallery.entity.FolderEntity;
+import com.smartdengg.rxgallery.core.FolderEntity;
 import com.smartdengg.rxgallery.example.R;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;

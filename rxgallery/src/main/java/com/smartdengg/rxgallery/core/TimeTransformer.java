@@ -23,16 +23,18 @@ import rx.functions.Func1;
 import rx.schedulers.TimeInterval;
 
 /**
- * Created by Joker on 2016/6/28.
+ * 创建时间:  2017/01/30 18:28 <br>
+ * 作者:  Joker <br>
+ * 描述:
  */
 class TimeTransformer<T> implements Observable.Transformer<T, T> {
 
   @Override public Observable<T> call(Observable<T> observable) {
     return observable.timeInterval().map(new Func1<TimeInterval<T>, T>() {
-      @Override public T call(TimeInterval<T> tTimeInterval) {
-        long milliseconds = tTimeInterval.getIntervalInMilliseconds();
+      @Override public T call(TimeInterval<T> timeInterval) {
+        long milliseconds = timeInterval.getIntervalInMilliseconds();
         Log.d("RxGallery", " \u21E2\u21E2\u21E2 RxGallery casts : " + milliseconds);
-        return tTimeInterval.getValue();
+        return timeInterval.getValue();
       }
     });
   }

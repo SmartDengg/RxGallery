@@ -17,8 +17,11 @@
 
 package com.smartdengg.rxgallery;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import com.smartdengg.rxgallery.ui.TransparentActivity;
 
 /**
  * Created by Joker on 2016/6/21.
@@ -29,7 +32,17 @@ public class Utils {
     throw new IllegalStateException("No instance");
   }
 
-  public static boolean hasPermission(Context context, String permission) {
+  public static boolean hasReadExternalPermission(Context context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && !Utils.hasPermission(context,
+        Manifest.permission.READ_EXTERNAL_STORAGE)) {
+      TransparentActivity.navigateToTransparentActivity(context,
+          new String[] { Manifest.permission.READ_EXTERNAL_STORAGE });
+      return false;
+    }
+    return true;
+  }
+
+  private static boolean hasPermission(Context context, String permission) {
     return (context.checkCallingOrSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
   }
 }

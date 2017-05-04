@@ -18,8 +18,6 @@
 package com.smartdengg.rxgallery.core;
 
 import android.content.Context;
-import com.smartdengg.rxgallery.entity.FolderEntity;
-import com.smartdengg.rxgallery.entity.ImageEntity;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,23 +28,23 @@ import rx.functions.Action2;
 import rx.functions.Func0;
 import rx.functions.Func1;
 
+import static com.smartdengg.rxgallery.Configuration.ALL_PICTURE_FOLDER_NAME;
+
 /**
- * Created by SmartDengg on 2016/3/5.
+ * 创建时间:  2017/01/30 18:57 <br>
+ * 作者:  SmartDengg <br>
+ * 描述:
  */
 public class GalleryListUseCase extends GalleryUseCase<List<FolderEntity>> {
 
   private List<ImageEntity> imageEntities = new ArrayList<>();
 
-  private GalleryListUseCase(Context context, String name) {
-    super(context, name);
+  private GalleryListUseCase(Context context) {
+    super(context);
   }
 
   public static GalleryListUseCase createdUseCase(Context context) {
-    return createdUseCase(context, null);
-  }
-
-  public static GalleryListUseCase createdUseCase(Context context, String name) {
-    return new GalleryListUseCase(context, name);
+    return new GalleryListUseCase(context);
   }
 
   @Override
@@ -56,16 +54,16 @@ public class GalleryListUseCase extends GalleryUseCase<List<FolderEntity>> {
       @Override public List<FolderEntity> call() {
         return new ArrayList<>();
       }
-    }, new CollectionAction(folderEntity, imageEntities))
+    }, new CollectionAction(imageEntities))
         .map(new Func1<List<FolderEntity>, List<FolderEntity>>() {
           @Override public List<FolderEntity> call(List<FolderEntity> folderEntities) {
 
-            FolderEntity clone = folderEntity.newInstance();
-            clone.setFolderName((name != null && !name.isEmpty()) ? name : "全部图片");
-            clone.setFolderPath("");
-            clone.setThumbPath(imageEntities.get(0).getImagePath());
-            clone.setImageEntities(imageEntities);
-            folderEntities.add(clone);
+            FolderEntity entity = FolderEntity.newInstance();
+            entity.setFolderName(ALL_PICTURE_FOLDER_NAME);
+            entity.setFolderPath("");
+            entity.setThumbPath(imageEntities.get(0).getImagePath());
+            entity.setImageEntities(imageEntities);
+            folderEntities.add(entity);
 
             Collections.sort(folderEntities, new SortComparator());
 
@@ -77,11 +75,9 @@ public class GalleryListUseCase extends GalleryUseCase<List<FolderEntity>> {
 
   private static final class CollectionAction implements Action2<List<FolderEntity>, ImageEntity> {
 
-    private FolderEntity folderEntity;
     private List<ImageEntity> imageEntities;
 
-    private CollectionAction(FolderEntity folderEntity, List<ImageEntity> imageEntities) {
-      this.folderEntity = folderEntity;
+    private CollectionAction(List<ImageEntity> imageEntities) {
       this.imageEntities = imageEntities;
     }
 
@@ -90,16 +86,16 @@ public class GalleryListUseCase extends GalleryUseCase<List<FolderEntity>> {
       imageEntities.add(imageEntity);
 
       File folderFile = new File(imageEntity.getImagePath()).getParentFile();
-      FolderEntity clone = folderEntity.newInstance();
-      clone.setFolderName(folderFile.getName());
-      clone.setFolderPath(folderFile.getAbsolutePath());
+      FolderEntity entity = FolderEntity.newInstance();
+      entity.setFolderName(folderFile.getName());
+      entity.setFolderPath(folderFile.getAbsolutePath());
 
-      if (!folderEntities.contains(clone)) {
-        clone.setThumbPath(imageEntity.getImagePath());
-        clone.addImage(imageEntity);
-        folderEntities.add(clone);
+      if (!folderEntities.contains(entity)) {
+        entity.setThumbPath(imageEntity.getImagePath());
+        entity.addImage(imageEntity);
+        folderEntities.add(entity);
       } else {
-        folderEntities.get(folderEntities.indexOf(clone)).addImage(imageEntity);
+        folderEntities.get(folderEntities.indexOf(entity)).addImage(imageEntity);
       }
     }
   }

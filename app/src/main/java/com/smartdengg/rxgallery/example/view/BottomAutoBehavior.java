@@ -17,8 +17,6 @@ import com.smartdengg.rxgallery.example.utils.DensityUtil;
  */
 public class BottomAutoBehavior extends CoordinatorLayout.Behavior<RelativeLayout> {
 
-  private static final String TAG = BottomAutoBehavior.class.getSimpleName();
-
   private static final int MIN_SCROLL_TO_HIDE = 10;
   private int totalDy;
   private int initialOffset;
@@ -40,9 +38,7 @@ public class BottomAutoBehavior extends CoordinatorLayout.Behavior<RelativeLayou
 
     totalDy += dy;
 
-    if (totalDy < initialOffset) {
-      return;
-    }
+    if (totalDy < initialOffset) return;
 
     if (dy > 0) {
       accummulatedDy = accummulatedDy > 0 ? accummulatedDy + dy : dy;

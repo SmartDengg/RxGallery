@@ -28,10 +28,9 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import com.orhanobut.logger.Logger;
+import com.smartdengg.rxgallery.core.FolderEntity;
 import com.smartdengg.rxgallery.core.GalleryMapUseCase;
-import com.smartdengg.rxgallery.entity.FolderEntity;
-import com.smartdengg.rxgallery.entity.ImageEntity;
+import com.smartdengg.rxgallery.core.ImageEntity;
 import com.smartdengg.rxgallery.example.R;
 import com.smartdengg.rxgallery.example.adapter.GalleryFolderAdapter;
 import com.smartdengg.rxgallery.example.adapter.GalleryImageAdapter;
@@ -222,8 +221,7 @@ public class GalleryActivity extends AppCompatActivity {
 
   private void loadGallery() {
 
-    subscription = GalleryMapUseCase.createdUseCase(GalleryActivity.this)
-        .retrieveAllGallery()
+    subscription = GalleryMapUseCase.createdUseCase(GalleryActivity.this).scanAllGallery()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Subscriber<Map<String, FolderEntity>>() {
           @Override public void onCompleted() {
@@ -234,20 +232,13 @@ public class GalleryActivity extends AppCompatActivity {
           }
 
           @Override public void onError(Throwable e) {
-            Logger.t(0).e(e.toString());
+            e.printStackTrace();
           }
 
           @Override public void onNext(Map<String, FolderEntity> folderEntityMap) {
 
             for (Map.Entry<String, FolderEntity> entry : folderEntityMap.entrySet()) {
-
-              FolderEntity wrapperFolderEntity = new FolderEntity();
-              wrapperFolderEntity.setFolderName(entry.getValue().getFolderName());
-              wrapperFolderEntity.setFolderPath(entry.getValue().getFolderPath());
-              wrapperFolderEntity.setThumbPath(entry.getValue().getThumbPath());
-              wrapperFolderEntity.setImageEntities(entry.getValue().getImageEntities());
-
-              GalleryActivity.this.folderEntities.add(wrapperFolderEntity);
+              GalleryActivity.this.folderEntities.add(entry.getValue());
             }
 
             //@formatter:on
@@ -315,7 +306,6 @@ public class GalleryActivity extends AppCompatActivity {
         imageEntities.set(index, entity);
       }
     }
-    folderEntity.setImageEntities(imageEntities);
 
     /*更新之前选中和当前选中文件夹状态*/
     currentFolderEntity.setChecked(false);

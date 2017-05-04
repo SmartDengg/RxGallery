@@ -21,7 +21,9 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by Joker on 2015/8/10.
+ * 创建时间:  2017/01/30 16:26 <br>
+ * 作者:  dengwei <br>
+ * 描述:
  */
 class IoScheduler {
 
@@ -29,7 +31,7 @@ class IoScheduler {
     throw new IllegalStateException("No instance");
   }
 
-  static final Observable.Transformer ioTransformer = new Observable.Transformer() {
+  private static final Observable.Transformer ioTransformer = new Observable.Transformer() {
     @Override public Object call(Object observable) {
       return ((Observable) observable).subscribeOn(Schedulers.io());
     }
@@ -39,6 +41,7 @@ class IoScheduler {
    * Don't break the chain: use RxJava's compose() operator
    */
   static <T> Observable.Transformer<T, T> apply() {
+    //noinspection unchecked
     return (Observable.Transformer<T, T>) ioTransformer;
   }
 }

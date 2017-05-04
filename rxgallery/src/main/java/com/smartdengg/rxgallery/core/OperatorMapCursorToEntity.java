@@ -19,7 +19,6 @@ package com.smartdengg.rxgallery.core;
 
 import android.database.Cursor;
 import android.os.Build;
-import com.smartdengg.rxgallery.entity.ImageEntity;
 import rx.Observable;
 import rx.Producer;
 import rx.Subscriber;
@@ -32,29 +31,27 @@ import rx.plugins.RxJavaHooks;
  */
 class OperatorMapCursorToEntity implements Observable.Operator<ImageEntity, Cursor> {
 
-  private String[] galleryProjection;
+  private String[] projection;
 
-  OperatorMapCursorToEntity(String[] galleryProjection) {
-    this.galleryProjection = galleryProjection;
+  OperatorMapCursorToEntity(String[] projection) {
+    this.projection = projection;
   }
 
   @Override public Subscriber<? super Cursor> call(Subscriber<? super ImageEntity> child) {
-    MapCursorSubscriber parent = new MapCursorSubscriber(child, galleryProjection);
+    MapCursorSubscriber parent = new MapCursorSubscriber(child, projection);
     child.add(parent);
     return parent;
   }
 
   private static final class MapCursorSubscriber extends Subscriber<Cursor> {
 
-    private ImageEntity parent = new ImageEntity();
-    private String[] galleryProjection;
-
+    private String[] projection;
     private Subscriber<? super ImageEntity> actual;
     boolean done;
 
-    MapCursorSubscriber(Subscriber<? super ImageEntity> child, String[] galleryProjection) {
+    MapCursorSubscriber(Subscriber<? super ImageEntity> child, String[] projection) {
       this.actual = child;
-      this.galleryProjection = galleryProjection;
+      this.projection = projection;
     }
 
     @Override public void onCompleted() {
@@ -82,8 +79,8 @@ class OperatorMapCursorToEntity implements Observable.Operator<ImageEntity, Curs
         result = this.convertToImageEntity(cursor);
       } catch (Exception ex) {
         Exceptions.throwIfFatal(ex);
-        unsubscribe();
         onError(OnErrorThrowable.addValueAsLastCause(ex, cursor));
+        unsubscribe();
         return;
       }
 
@@ -95,37 +92,37 @@ class OperatorMapCursorToEntity implements Observable.Operator<ImageEntity, Curs
     }
 
     private ImageEntity convertToImageEntity(Cursor cursor) {
-      String imagePath = cursor.getString(cursor.getColumnIndexOrThrow(galleryProjection[0]));
-      String imageName = cursor.getString(cursor.getColumnIndexOrThrow(galleryProjection[1]));
-      long addDate = cursor.getLong(cursor.getColumnIndexOrThrow(galleryProjection[2]));
-      long id = cursor.getLong(cursor.getColumnIndexOrThrow(galleryProjection[3]));
-      String title = cursor.getString(cursor.getColumnIndexOrThrow(galleryProjection[4]));
-      String mimeType = cursor.getString(cursor.getColumnIndexOrThrow(galleryProjection[5]));
+      String imagePath = cursor.getString(cursor.getColumnIndexOrThrow(projection[0]));
+      String imageName = cursor.getString(cursor.getColumnIndexOrThrow(projection[1]));
+      long addDate = cursor.getLong(cursor.getColumnIndexOrThrow(projection[2]));
+      long id = cursor.getLong(cursor.getColumnIndexOrThrow(projection[3]));
+      String title = cursor.getString(cursor.getColumnIndexOrThrow(projection[4]));
+      String mimeType = cursor.getString(cursor.getColumnIndexOrThrow(projection[5]));
 
-      long size = cursor.getLong(cursor.getColumnIndexOrThrow(galleryProjection[6]));
-      long modifyDate = cursor.getLong(cursor.getColumnIndexOrThrow(galleryProjection[7]));
+      long size = cursor.getLong(cursor.getColumnIndexOrThrow(projection[6]));
+      long modifyDate = cursor.getLong(cursor.getColumnIndexOrThrow(projection[7]));
 
-      ImageEntity clone = parent.newInstance();
+      ImageEntity entity = ImageEntity.newInstance();
 
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-        String width = cursor.getString(cursor.getColumnIndexOrThrow(galleryProjection[8]));
-        String Height = cursor.getString(cursor.getColumnIndexOrThrow(galleryProjection[9]));
-        clone.setWidth(width);
-        clone.setHeight(Height);
+        String width = cursor.getString(cursor.getColumnIndexOrThrow(projection[8]));
+        String Height = cursor.getString(cursor.getColumnIndexOrThrow(projection[9]));
+        entity.setWidth(width);
+        entity.setHeight(Height);
       } else {
-        clone.setWidth("0");
-        clone.setHeight("0");
+        entity.setWidth("0");
+        entity.setHeight("0");
       }
 
-      clone.setImagePath(imagePath);
-      clone.setImageName(imageName);
-      clone.setAddDate(addDate);
-      clone.setId(id);
-      clone.setTitle(title);
-      clone.setMimeType(mimeType);
-      clone.setSize(size);
-      clone.setModifyDate(modifyDate);
-      return clone;
+      entity.setImagePath(imagePath);
+      entity.setImageName(imageName);
+      entity.setAddDate(addDate);
+      entity.setId(id);
+      entity.setTitle(title);
+      entity.setMimeType(mimeType);
+      entity.setSize(size);
+      entity.setModifyDate(modifyDate);
+      return entity;
     }
   }
 }

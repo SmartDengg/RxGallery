@@ -17,11 +17,12 @@
 
 package com.smartdengg.rxgallery.core;
 
-import com.smartdengg.rxgallery.entity.ImageEntity;
 import rx.Observable;
 
 /**
- * Created by SmartDengg on 2016/10/2.
+ * 创建时间:  2017/01/30 16:21 <br>
+ * 作者:  SmartDengg <br>
+ * 描述:
  */
 interface ImageHunter<T> {
   Observable<T> hunt(Observable<ImageEntity> cursorObservable);
